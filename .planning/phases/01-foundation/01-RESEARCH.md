@@ -645,22 +645,13 @@ def main():
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Python version for the project**
-   - What we know: The developer's default Python is 3.14.5; `pip install` runs on Python 3.11 (found at `C:\Users\jerem\AppData\Local\Programs\Python\Python311\`).
-   - What's unclear: Should the project target Python 3.11 explicitly, or is 3.14 acceptable? pygame-ce 2.5.7 was installed for Python 3.11 in this session.
-   - Recommendation: Create a virtual environment pinned to Python 3.11 and document this in README or .python-version file. The Phase 1 plan should include `python -m venv` using the 3.11 executable explicitly.
+1. **Python version for the project** — RESOLVED: Use Python 3.11 via explicit venv. The developer's default Python is 3.14.5, but pygame-ce 2.5.7 is installed under `C:\Users\jerem\AppData\Local\Programs\Python\Python311\`. All `python` commands in plans must use the venv interpreter (`.\venv\Scripts\python` on Windows). Phase 1 Plan 01-01 creates the venv using `C:\Users\jerem\AppData\Local\Programs\Python\Python311\python.exe -m venv venv` and all subsequent verify commands use `.\venv\Scripts\python`.
 
-2. **FluidSynth installation**
-   - What we know: FluidSynth is NOT installed in this environment (`shutil.which("fluidsynth")` returns None).
-   - What's unclear: Is this a gap the developer needs to fill before Phase 1 is complete, or should `convert_assets.py` have a `--skip-midi` flag for iterative development?
-   - Recommendation: The plan must include a FluidSynth install step as a prerequisite task (Wave 0 or task 0). `convert_assets.py` should have a `--skip-midi` flag that skips WAV conversion but warns clearly, so developers can test the ICO pipeline independently.
+2. **FluidSynth installation** — RESOLVED: FluidSynth is a required prerequisite for Phase 1 success criterion 3 ("all WAV files exist in assets/"). `--skip-midi` exists as a developer convenience flag for testing ICO conversion independently, but Phase 1 is not complete until `passport.wav` and `canyon.wav` exist in `assets/sounds/`. Plan 01-04 includes a human-action checkpoint requiring the developer to install FluidSynth (`winget install FluidSynth.FluidSynth`) before the MIDI conversion task runs.
 
-3. **Goblin green beam color**
-   - What we know: VB6 uses `&H80FF&` for Goblin beams (line 1239: `Line (...), &H80FF&`). In OLE color: `0x000080FF` = RGB(255, 128, 0) = **orange**, not green.
-   - What's unclear: Was this intentional? REQUIREMENTS.md CMB-04 says "Goblin beams render as green lines."
-   - Recommendation: Use green `(0, 200, 0)` per REQUIREMENTS.md (CMB-04). The VB6 `&H80FF&` may have been a debugging artifact or error. This is Phase 3 work but the color constant should be defined in `settings.py` in Phase 1. [ASSUMED]
+3. **Goblin beam color** — RESOLVED: Use green `(0, 200, 0)` per REQUIREMENTS.md CMB-04. The VB6 `&H80FF&` (OLE BGR = RGB(255, 128, 0) = orange) was a VB6 artifact or error. REQUIREMENTS.md is authoritative. Color constant `GOBLIN_BEAM_COLOR = (0, 200, 0)` defined in `settings.py` in Phase 1; `SUPERMAN_BEAM_COLOR = (200, 0, 0)`. Used in Phase 3 but defined now for consistency.
 
 ---
 

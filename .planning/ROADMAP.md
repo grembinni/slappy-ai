@@ -37,11 +37,18 @@ polish and make the game shippable.
 **Plans:** 5 plans
 
 Plans:
+**Wave 1** (parallel):
 - [ ] 01-01-PLAN.md — Project scaffold: settings.py constants, requirements.txt, .gitignore, pytest.ini
 - [ ] 01-02-PLAN.md — Test scaffold: conftest.py, test_settings.py, test_convert.py
 - [ ] 01-03-PLAN.md — raw_assets/ population: create directory structure and human copies 46 source files
+
+**Wave 2** *(blocked on Wave 1 completion — FluidSynth install checkpoint required)*:
 - [ ] 01-04-PLAN.md — convert_assets.py: ICO→PNG + MIDI→WAV pipeline with --dry-run, --skip-midi, --soundfont
+
+**Wave 3** *(blocked on Wave 2 completion)*:
 - [ ] 01-05-PLAN.md — Walking skeleton: main.py, game.py, assets.py, test_assets.py
+
+**Cross-cutting constraints:** All geometry/color constants flow only through settings.py; assets/ directory is gitignored (generated output); `dt = clock.tick(FPS) / 1000.0` established in game.py in Wave 3.
 
 ### Phase 2: Two Characters Move
 **Goal:** Two players can simultaneously control their characters on the same keyboard, moving freely within boundaries.
