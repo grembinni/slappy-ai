@@ -13,7 +13,7 @@ polish and make the game shippable.
 ## Phases
 
 - [x] **Phase 1: Foundation** — Asset pipeline, settings, game loop skeleton, background renders in window
-- [ ] **Phase 2: Two Characters Move** — Both characters appear, move with keyboard, wrap, respect ground/ceiling
+- [x] **Phase 2: Two Characters Move** — Both characters appear, move with keyboard, wrap, respect ground/ceiling
 - [ ] **Phase 3: Combat** — Beams fire, travel, wrap, and hit detection triggers CRASHING state
 - [ ] **Phase 4: Death, Respawn & Scoring** — Crash animation, DEAD state, respawn keys, HUD scores, win condition
 - [ ] **Phase 5: Audio** — All WAVs play on correct events, background music loops, M mutes
@@ -61,7 +61,18 @@ Plans:
 3. Either character exiting the left edge reappears on the right edge (and vice versa) in the same frame
 4. Neither character can move below the green ground zone or above the white ceiling zone
 5. The `CharState` enum is active per player and each character starts in `ALIVE` state
-**Plans:** TBD
+**Plans:** 4 plans
+
+Plans:
+**Wave 1:**
+- [x] 02-01-PLAN.md — settings.py: add PLAYER_SPEED_UP, PLAYER_SPEED_H, PLAYER_SPEED_DOWN, ANIM_INTERVAL
+
+**Wave 2** *(blocked on Wave 1)*:
+- [x] 02-02-PLAN.md — player.py: CharState enum + Player class (movement, animation, wrap, boundaries)
+
+**Wave 3** *(parallel, blocked on Wave 2)*:
+- [x] 02-03-PLAN.md — game.py: wire two Player instances into update/draw
+- [x] 02-04-PLAN.md — test_player.py: unit tests for all MOV-01 through MOV-10
 
 ### Phase 3: Combat
 **Goal:** Players can shoot laser beams that travel across the screen, wrap, and kill the opponent on contact.
@@ -122,7 +133,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 5/5 | Complete | 2026-05-16 |
-| 2. Two Characters Move | 0/? | Not started | - |
+| 2. Two Characters Move | 4/4 | Complete | 2026-05-16 |
 | 3. Combat | 0/? | Not started | - |
 | 4. Death, Respawn & Scoring | 0/? | Not started | - |
 | 5. Audio | 0/? | Not started | - |

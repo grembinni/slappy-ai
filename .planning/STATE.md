@@ -1,32 +1,34 @@
 # Project State
 
 ## Current Status
-- Phase: 2
-- Status: Planning complete — ready to execute
+- Phase: 3
+- Status: Ready — Phase 2 complete
 - Last updated: 2026-05-16
-- Current Plan: 1/4
+- Current Plan: 0/?
 
 ## Project Reference
 See: .planning/PROJECT.md (updated 2026-05-16)
 
 **Core value:** Two players on the same keyboard can immediately start blasting each other.
-**Current focus:** Phase 2 — Two Characters Move
+**Current focus:** Phase 3 — Combat
 
 ## Phase History
 - Phase 1: Foundation — Complete (2026-05-16) — 5/5 plans, 15 tests passing
+- Phase 2: Two Characters Move — Complete (2026-05-16) — 4/4 plans, 35 tests passing
 
 ---
 
 ## Performance Metrics
 
 - Requirements total: 50
-- Requirements complete: 3 (ENG-01, ENG-02, ENG-03)
+- Requirements complete: 13 (ENG-01–05, MOV-01–10)
 - Phases total: 6
-- Phases complete: 1
+- Phases complete: 2
 
 | Phase | Plan | Duration (s) | Tasks | Files |
 |-------|------|-------------|-------|-------|
 | 01 | 05 | 162 | 3 | 5 |
+| 02 | 04 | — | 4 | 4 |
 
 ## Accumulated Context
 
@@ -62,14 +64,8 @@ See: .planning/PROJECT.md (updated 2026-05-16)
 ## Session Continuity
 
 Last session: 2026-05-16
-Stopped at: 02-01 complete — Phase 2 movement constants added to settings.py
-Resume file: .planning/phases/02-two-characters-move/02-02-PLAN.md
-Next: /gsd:execute-phase 2
-
-Phase 2 wave structure:
-  Wave 1: 02-01 (settings.py)
-  Wave 2: 02-02 (player.py) — blocked on Wave 1
-  Wave 3: 02-03 (game.py) + 02-04 (test_player.py) — parallel, blocked on Wave 2
+Stopped at: Phase 2 complete — both characters move, animate, wrap, respect boundaries
+Next: /gsd:discuss-phase 3 (Combat — beams, travel, wrap, hit detection)
 
 Start each session by reading:
 1. `.planning/STATE.md` (this file) — current position
