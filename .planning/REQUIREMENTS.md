@@ -107,13 +107,55 @@
 
 ## Traceability
 
-| REQ-ID | Phase |
-|--------|-------|
-| ENG-01..05 | Phase 1 |
-| MOV-01..10 | Phase 2 |
-| CMB-01..08 | Phase 3 |
-| DTH-01..07 | Phase 4 |
-| SCR-01..06 | Phase 4 |
-| AUD-01..06 | Phase 5 |
-| UI-01..07 | Phase 6 |
-| PKG-01 | Phase 7 |
+| REQ-ID | Phase | Status |
+|--------|-------|--------|
+| ENG-01 | Phase 1 | Pending |
+| ENG-02 | Phase 1 | Pending |
+| ENG-03 | Phase 1 | Pending |
+| ENG-04 | Phase 1 | Pending |
+| ENG-05 | Phase 1 | Pending |
+| MOV-01 | Phase 2 | Pending |
+| MOV-02 | Phase 2 | Pending |
+| MOV-03 | Phase 2 | Pending |
+| MOV-04 | Phase 2 | Pending |
+| MOV-05 | Phase 2 | Pending |
+| MOV-06 | Phase 2 | Pending |
+| MOV-07 | Phase 2 | Pending |
+| MOV-08 | Phase 2 | Pending |
+| MOV-09 | Phase 2 | Pending |
+| MOV-10 | Phase 2 | Pending |
+| CMB-01 | Phase 3 | Pending |
+| CMB-02 | Phase 3 | Pending |
+| CMB-03 | Phase 3 | Pending |
+| CMB-04 | Phase 3 | Pending |
+| CMB-05 | Phase 3 | Pending |
+| CMB-06 | Phase 3 | Pending |
+| CMB-07 | Phase 3 | Pending |
+| CMB-08 | Phase 3 | Pending |
+| DTH-01 | Phase 4 | Pending |
+| DTH-02 | Phase 4 | Pending |
+| DTH-03 | Phase 4 | Pending |
+| DTH-04 | Phase 4 | Pending |
+| DTH-05 | Phase 4 | Pending |
+| DTH-06 | Phase 4 | Pending |
+| DTH-07 | Phase 4 | Pending |
+| SCR-01 | Phase 4 | Pending |
+| SCR-02 | Phase 4 | Pending |
+| SCR-03 | Phase 4 | Pending |
+| SCR-04 | Phase 4 | Pending |
+| SCR-05 | Phase 4 | Pending |
+| SCR-06 | Phase 4 | Pending |
+| AUD-01 | Phase 5 | Pending |
+| AUD-02 | Phase 5 | Pending |
+| AUD-03 | Phase 5 | Pending |
+| AUD-04 | Phase 5 | Pending |
+| AUD-05 | Phase 5 | Pending |
+| AUD-06 | Phase 5 | Pending |
+| UI-01 | Phase 6 | Pending |
+| UI-02 | Phase 6 | Pending |
+| UI-03 | Phase 6 | Pending |
+| UI-04 | Phase 6 | Pending |
+| UI-05 | Phase 6 | Pending |
+| UI-06 | Phase 6 | Pending |
+| UI-07 | Phase 6 | Pending |
+| PKG-01 | Phase 6 | Pending |
