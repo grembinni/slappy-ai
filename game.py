@@ -1,5 +1,6 @@
 import pygame
 from enum import Enum, auto
+from player import Player
 from settings import (
     SCREEN_W,
     SCREEN_H,
@@ -32,6 +33,10 @@ class Game:
         self.clock = pygame.time.Clock()
         self.state = GameState.PLAYING
         self.background = self._bake_background()
+        self.players = [
+            Player("superman", self.assets),
+            Player("goblin", self.assets),
+        ]
 
     def _bake_background(self) -> pygame.Surface:
         """Create the static background: cyan sky, white ceiling, green ground."""
@@ -42,12 +47,16 @@ class Game:
         return surf
 
     def update(self, dt: float) -> None:
-        """Update all game entities by dt seconds. Phase 1: no entities yet."""
-        pass
+        """Update all game entities by dt seconds."""
+        keys = pygame.key.get_pressed()
+        for player in self.players:
+            player.update(dt, keys)
 
     def draw(self) -> None:
         """Render one frame: blit background then flip display."""
         self.screen.blit(self.background, (0, 0))
+        for player in self.players:
+            player.draw(self.screen)
         pygame.display.flip()
 
     def run(self) -> None:
