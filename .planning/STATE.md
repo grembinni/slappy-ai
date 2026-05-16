@@ -61,11 +61,17 @@ See: .planning/PROJECT.md (updated 2026-05-16)
 - Ground is visual floor only — characters fly back up freely from GROUND_Y
 - SPRITE_SIZE = 128 confirmed; all Superman sprites confirmed present
 
+### Phase 3 Decisions
+- Beams fire LEFT/RIGHT only; 40px bolt, 3px thick
+- Beam ownership: player.beams deque(maxlen=10)
+- CRASHING state: freeze in place (pure stub) — Phase 4 adds animation
+- VB6 Or-bug fix: `beam.direction in (DIR_LEFT, DIR_RIGHT)` — locked
+
 ## Session Continuity
 
 Last session: 2026-05-16
-Stopped at: Phase 2 complete — both characters move, animate, wrap, respect boundaries
-Next: /gsd:discuss-phase 3 (Combat — beams, travel, wrap, hit detection)
+Stopped at: Phase 3 context gathered — beam firing, travel, wrap, collision decisions locked
+Next: /gsd:plan-phase 3 (Combat — create PLAN.md)
 
 Start each session by reading:
 1. `.planning/STATE.md` (this file) — current position
