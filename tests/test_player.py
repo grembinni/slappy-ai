@@ -10,7 +10,8 @@ from enum import Enum
 import settings
 from player import Player, CharState
 from settings import (
-    SCREEN_W, SCREEN_H, SPRITE_SIZE, CEILING_H, GROUND_Y,
+    SCREEN_W, SCREEN_H, SPRITE_SIZE, DISPLAY_SPRITE_SIZE,
+    CEILING_H, GROUND_Y, CEILING_STOP_Y, GROUND_STOP_Y,
     PLAYER_SPEED_H, PLAYER_SPEED_UP, PLAYER_SPEED_DOWN, ANIM_INTERVAL,
     DIR_UP, DIR_DOWN, DIR_LEFT, DIR_RIGHT, DIR_IDLE,
 )
@@ -112,7 +113,7 @@ def test_goblin_moves_right():
     # MOV-02, MOV-03
     p = Player("goblin", make_assets())
     orig_x = p.x
-    p.update(0.1, make_keys(pygame.K_f))
+    p.update(0.1, make_keys(pygame.K_d))
     assert p.x == pytest.approx(orig_x + PLAYER_SPEED_H * 0.1)
 
 
@@ -125,7 +126,7 @@ def test_ceiling_clamp():
     p = Player("superman", make_assets())
     p.y = float(CEILING_H + 1)   # just above ceiling — pressing up should be clamped
     p.update(0.5, make_keys(pygame.K_UP))
-    assert p.y >= CEILING_H, f"y={p.y} should be >= CEILING_H={CEILING_H}"
+    assert p.y >= CEILING_STOP_Y, f"y={p.y} should be >= CEILING_STOP_Y={CEILING_STOP_Y}"
 
 
 def test_ground_clamp():
@@ -133,7 +134,7 @@ def test_ground_clamp():
     p = Player("superman", make_assets())
     p.y = float(SCREEN_H)   # below ground boundary
     p.update(0.016, make_keys())
-    assert p.y <= GROUND_Y, f"y={p.y} should be <= GROUND_Y={GROUND_Y}"
+    assert p.y <= GROUND_STOP_Y, f"y={p.y} should be <= GROUND_STOP_Y={GROUND_STOP_Y}"
 
 
 # ---------------------------------------------------------------------------
@@ -151,7 +152,7 @@ def test_horizontal_wrap_right():
 def test_horizontal_wrap_left():
     # MOV-04
     p = Player("superman", make_assets())
-    p.x = float(-SPRITE_SIZE - 10)
+    p.x = float(-DISPLAY_SPRITE_SIZE - 10)
     p.update(0.016, make_keys(pygame.K_LEFT))
     assert p.x >= 0, f"Expected wrap to right side, got x={p.x}"
 
@@ -167,8 +168,8 @@ def test_rect_property():
     assert isinstance(r, pygame.Rect)
     assert r.x == int(p.x)
     assert r.y == int(p.y)
-    assert r.width == SPRITE_SIZE
-    assert r.height == SPRITE_SIZE
+    assert r.width == DISPLAY_SPRITE_SIZE
+    assert r.height == DISPLAY_SPRITE_SIZE
 
 
 # ---------------------------------------------------------------------------
@@ -233,9 +234,9 @@ def test_get_sprite_key_ground_walk():
 def test_no_downward_movement_on_ground():
     # MOV-05, D-11
     p = Player("superman", make_assets())
-    p.y = float(GROUND_Y)   # exactly at ground
+    p.y = float(GROUND_STOP_Y)   # at ground stop position
     p.update(0.1, make_keys(pygame.K_DOWN))
-    assert p.y == GROUND_Y, f"Down key should be suppressed on ground, got y={p.y}"
+    assert p.y == GROUND_STOP_Y, f"Down key should be suppressed on ground, got y={p.y}"
 
 
 # ---------------------------------------------------------------------------
@@ -269,7 +270,7 @@ def test_both_players_move_independently():
     gob_orig_x = gob.x
 
     # Press both right keys simultaneously
-    keys = make_keys(pygame.K_RIGHT, pygame.K_f)
+    keys = make_keys(pygame.K_RIGHT, pygame.K_d)
     sup.update(0.1, keys)
     gob.update(0.1, keys)
 

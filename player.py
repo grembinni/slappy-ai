@@ -1,7 +1,8 @@
 import pygame
 from enum import Enum, auto
 from settings import (
-    SCREEN_W, SCREEN_H, SPRITE_SIZE, CEILING_H, GROUND_Y,
+    SCREEN_W, SCREEN_H, SPRITE_SIZE, DISPLAY_SPRITE_SIZE,
+    CEILING_STOP_Y, GROUND_STOP_Y,
     DIR_UP, DIR_DOWN, DIR_LEFT, DIR_RIGHT, DIR_IDLE,
     PLAYER_SPEED_UP, PLAYER_SPEED_H, PLAYER_SPEED_DOWN, ANIM_INTERVAL,
 )
@@ -49,10 +50,10 @@ class Player:
             DIR_RIGHT: pygame.K_RIGHT,
         },
         "goblin": {
-            DIR_UP:    pygame.K_e,
-            DIR_DOWN:  pygame.K_d,
-            DIR_LEFT:  pygame.K_s,
-            DIR_RIGHT: pygame.K_f,
+            DIR_UP:    pygame.K_w,
+            DIR_DOWN:  pygame.K_s,
+            DIR_LEFT:  pygame.K_a,
+            DIR_RIGHT: pygame.K_d,
         },
     }
 
@@ -126,7 +127,7 @@ class Player:
     @property
     def rect(self) -> pygame.Rect:
         """Axis-aligned bounding rect — used by Phase 3 beam collision."""
-        return pygame.Rect(int(self.x), int(self.y), SPRITE_SIZE, SPRITE_SIZE)
+        return pygame.Rect(int(self.x), int(self.y), DISPLAY_SPRITE_SIZE, DISPLAY_SPRITE_SIZE)
 
     # ------------------------------------------------------------------ #
     # Update                                                               #
@@ -142,7 +143,7 @@ class Player:
             return
 
         # Step 1 — determine on_ground before movement
-        on_ground = self.y >= GROUND_Y
+        on_ground = self.y >= GROUND_STOP_Y
 
         # Step 2 — compute dx, dy, direction
         dx = 0.0
@@ -178,19 +179,19 @@ class Player:
         self.y += dy
 
         # Step 4 — horizontal wrap (MOV-04)
-        if self.x < -SPRITE_SIZE:
+        if self.x < -DISPLAY_SPRITE_SIZE:
             self.x = SCREEN_W
         elif self.x > SCREEN_W:
-            self.x = -SPRITE_SIZE
+            self.x = -DISPLAY_SPRITE_SIZE
 
         # Step 5 — vertical clamp
-        if self.y < CEILING_H:   # MOV-06: ceiling
-            self.y = CEILING_H
-        if self.y > GROUND_Y:    # MOV-05: ground
-            self.y = GROUND_Y
+        if self.y < CEILING_STOP_Y:   # MOV-06: ceiling (top 75% into cloud zone)
+            self.y = CEILING_STOP_Y
+        if self.y > GROUND_STOP_Y:    # MOV-05: ground (bottom 75% into ground zone)
+            self.y = GROUND_STOP_Y
 
         # Step 6 — re-compute on_ground after clamp
-        on_ground = self.y >= GROUND_Y
+        on_ground = self.y >= GROUND_STOP_Y
 
         # Step 7 — animation timer
         self._anim_timer += dt
@@ -212,7 +213,8 @@ class Player:
     def draw(self, screen: pygame.Surface) -> None:
         """Blit the current animation frame onto *screen*."""
         key = self._get_sprite_key()
-        screen.blit(self.assets.sprites[key], (int(self.x), int(self.y)))
+        surf = pygame.transform.scale(self.assets.sprites[key], (DISPLAY_SPRITE_SIZE, DISPLAY_SPRITE_SIZE))
+        screen.blit(surf, (int(self.x), int(self.y)))
 
     def _get_sprite_key(self) -> str:
         """Return the correct sprite key for the current movement/ground state."""

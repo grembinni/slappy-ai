@@ -31,7 +31,16 @@ DIR_POSE = 5
 DIR_IDLE = 6
 
 # Player Movement (Phase 2)
-PLAYER_SPEED_UP = 200      # px/s — rising against gravity (D-01)
-PLAYER_SPEED_H = 300       # px/s — horizontal left and right (D-01)
-PLAYER_SPEED_DOWN = 400    # px/s — falling with gravity (D-01)
-ANIM_INTERVAL = 0.15       # seconds per animation frame (~7 Hz) (D-03)
+PLAYER_SPEED_UP = 250      # px/s — rising against gravity
+PLAYER_SPEED_H = 375       # px/s — horizontal left and right
+PLAYER_SPEED_DOWN = 500    # px/s — falling with gravity
+ANIM_INTERVAL = 0.15       # seconds per animation frame (~7 Hz)
+
+# Display size for sprites (15% smaller than source PNG)
+DISPLAY_SPRITE_SIZE = int(SPRITE_SIZE * 0.85)  # 108px
+
+# Effective boundary clamp positions (derived from display sprite size)
+# Ground: sprite bottom stops when 75% into ground zone (GROUND_Y to SCREEN_H)
+GROUND_STOP_Y = GROUND_Y + int((SCREEN_H - GROUND_Y) * 0.75) - DISPLAY_SPRITE_SIZE
+# Ceiling: sprite top stops when 75% into ceiling zone (0 to CEILING_H)
+CEILING_STOP_Y = int(CEILING_H * 0.25)
