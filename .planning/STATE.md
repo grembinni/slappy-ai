@@ -2,9 +2,9 @@
 
 ## Current Status
 - Phase: 2
-- Status: Context gathered — ready for planning
+- Status: Planning complete — ready to execute
 - Last updated: 2026-05-16
-- Current Plan: 0/?
+- Current Plan: 1/4
 
 ## Project Reference
 See: .planning/PROJECT.md (updated 2026-05-16)
@@ -62,9 +62,14 @@ See: .planning/PROJECT.md (updated 2026-05-16)
 ## Session Continuity
 
 Last session: 2026-05-16
-Stopped at: Phase 2 context gathered
-Resume file: .planning/phases/02-two-characters-move/02-CONTEXT.md
-Next: /gsd:plan-phase 2
+Stopped at: 02-01 complete — Phase 2 movement constants added to settings.py
+Resume file: .planning/phases/02-two-characters-move/02-02-PLAN.md
+Next: /gsd:execute-phase 2
+
+Phase 2 wave structure:
+  Wave 1: 02-01 (settings.py)
+  Wave 2: 02-02 (player.py) — blocked on Wave 1
+  Wave 3: 02-03 (game.py) + 02-04 (test_player.py) — parallel, blocked on Wave 2
 
 Start each session by reading:
 1. `.planning/STATE.md` (this file) — current position
