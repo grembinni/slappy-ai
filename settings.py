@@ -29,3 +29,9 @@ DIR_LEFT = 3
 DIR_RIGHT = 4
 DIR_POSE = 5
 DIR_IDLE = 6
+
+# Player Movement (Phase 2)
+PLAYER_SPEED_UP = 200      # px/s — rising against gravity (D-01)
+PLAYER_SPEED_H = 300       # px/s — horizontal left and right (D-01)
+PLAYER_SPEED_DOWN = 400    # px/s — falling with gravity (D-01)
+ANIM_INTERVAL = 0.15       # seconds per animation frame (~7 Hz) (D-03)
