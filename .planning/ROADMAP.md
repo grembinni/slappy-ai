@@ -34,7 +34,14 @@ polish and make the game shippable.
 3. All PNG sprites and WAV files exist in the `assets/` folder (conversion script ran without errors)
 4. Closing the window (X button or Delete key) exits cleanly with no traceback
 5. `settings.py` constants (`SCREEN_W`, `SCREEN_H`, `SPRITE_SIZE`, `WIN_SCORE`, `BEAM_SPEED`, `FPS`) are importable and correct
-**Plans:** TBD
+**Plans:** 5 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Project scaffold: settings.py constants, requirements.txt, .gitignore, pytest.ini
+- [ ] 01-02-PLAN.md — Test scaffold: conftest.py, test_settings.py, test_convert.py
+- [ ] 01-03-PLAN.md — raw_assets/ population: create directory structure and human copies 46 source files
+- [ ] 01-04-PLAN.md — convert_assets.py: ICO→PNG + MIDI→WAV pipeline with --dry-run, --skip-midi, --soundfont
+- [ ] 01-05-PLAN.md — Walking skeleton: main.py, game.py, assets.py, test_assets.py
 
 ### Phase 2: Two Characters Move
 **Goal:** Two players can simultaneously control their characters on the same keyboard, moving freely within boundaries.
@@ -107,7 +114,7 @@ polish and make the game shippable.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/? | Not started | - |
+| 1. Foundation | 0/5 | Planning | - |
 | 2. Two Characters Move | 0/? | Not started | - |
 | 3. Combat | 0/? | Not started | - |
 | 4. Death, Respawn & Scoring | 0/? | Not started | - |
