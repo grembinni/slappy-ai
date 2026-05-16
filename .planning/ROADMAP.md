@@ -12,7 +12,7 @@ polish and make the game shippable.
 
 ## Phases
 
-- [ ] **Phase 1: Foundation** — Asset pipeline, settings, game loop skeleton, background renders in window
+- [x] **Phase 1: Foundation** — Asset pipeline, settings, game loop skeleton, background renders in window
 - [ ] **Phase 2: Two Characters Move** — Both characters appear, move with keyboard, wrap, respect ground/ceiling
 - [ ] **Phase 3: Combat** — Beams fire, travel, wrap, and hit detection triggers CRASHING state
 - [ ] **Phase 4: Death, Respawn & Scoring** — Crash animation, DEAD state, respawn keys, HUD scores, win condition
@@ -38,15 +38,15 @@ polish and make the game shippable.
 
 Plans:
 **Wave 1** (parallel):
-- [ ] 01-01-PLAN.md — Project scaffold: settings.py constants, requirements.txt, .gitignore, pytest.ini
-- [ ] 01-02-PLAN.md — Test scaffold: conftest.py, test_settings.py, test_convert.py
-- [ ] 01-03-PLAN.md — raw_assets/ population: create directory structure and human copies 46 source files
+- [x] 01-01-PLAN.md — Project scaffold: settings.py constants, requirements.txt, .gitignore, pytest.ini
+- [x] 01-02-PLAN.md — Test scaffold: conftest.py, test_settings.py, test_convert.py
+- [x] 01-03-PLAN.md — raw_assets/ population: create directory structure and human copies 46 source files
 
 **Wave 2** *(blocked on Wave 1 completion — FluidSynth install checkpoint required)*:
-- [ ] 01-04-PLAN.md — convert_assets.py: ICO→PNG + MIDI→WAV pipeline with --dry-run, --skip-midi, --soundfont
+- [x] 01-04-PLAN.md — convert_assets.py: ICO→PNG + MIDI→WAV pipeline with --dry-run, --skip-midi, --soundfont
 
 **Wave 3** *(blocked on Wave 2 completion)*:
-- [ ] 01-05-PLAN.md — Walking skeleton: main.py, game.py, assets.py, test_assets.py
+- [x] 01-05-PLAN.md — Walking skeleton: main.py, game.py, assets.py, test_assets.py
 
 **Cross-cutting constraints:** All geometry/color constants flow only through settings.py; assets/ directory is gitignored (generated output); `dt = clock.tick(FPS) / 1000.0` established in game.py in Wave 3.
 
@@ -121,7 +121,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/5 | Planning | - |
+| 1. Foundation | 5/5 | Complete | 2026-05-16 |
 | 2. Two Characters Move | 0/? | Not started | - |
 | 3. Combat | 0/? | Not started | - |
 | 4. Death, Respawn & Scoring | 0/? | Not started | - |

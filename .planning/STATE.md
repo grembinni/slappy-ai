@@ -2,8 +2,9 @@
 
 ## Current Status
 - Phase: 1
-- Status: Planned — Ready to execute (5 plans, 3 waves)
+- Status: Complete — All 5 plans executed
 - Last updated: 2026-05-16
+- Current Plan: 5/5 (all complete)
 
 ## Project Reference
 See: .planning/PROJECT.md (updated 2026-05-16)
@@ -12,16 +13,20 @@ See: .planning/PROJECT.md (updated 2026-05-16)
 **Current focus:** Phase 1 — Foundation
 
 ## Phase History
-(none yet)
+- Phase 1: Foundation — Complete (2026-05-16) — 5/5 plans, 15 tests passing
 
 ---
 
 ## Performance Metrics
 
 - Requirements total: 50
-- Requirements complete: 0
+- Requirements complete: 3 (ENG-01, ENG-02, ENG-03)
 - Phases total: 6
-- Phases complete: 0
+- Phases complete: 1
+
+| Phase | Plan | Duration (s) | Tasks | Files |
+|-------|------|-------------|-------|-------|
+| 01 | 05 | 162 | 3 | 5 |
 
 ## Accumulated Context
 
@@ -33,6 +38,8 @@ See: .planning/PROJECT.md (updated 2026-05-16)
 - Fix VB6 Or-bug: use `beam.direction in (LEFT, RIGHT)` not `== LEFT or RIGHT`
 - All movement dt-scaled via `clock.tick(60) / 1000.0`
 - Plain classes with `update(dt)` / `draw(screen)` — no `pygame.sprite.Sprite`
+- pygame.mixer.init() in main.py only; AssetCache is caller-agnostic re: mixer
+- convert_alpha() requires display.set_mode() first — tests use SDL_VIDEODRIVER=dummy
 
 ### Critical Pitfalls to Watch
 - VB6 `Or 4` bug survives verbatim in Python — unit test required
@@ -46,6 +53,10 @@ See: .planning/PROJECT.md (updated 2026-05-16)
 - OmnipotentShootingGuy score: shown plainly in HUD
 
 ## Session Continuity
+
+Last session: 2026-05-16
+Stopped at: Completed 01-05-PLAN.md (Phase 1 complete)
+Next: Phase 2 — Two Characters Move
 
 Start each session by reading:
 1. `.planning/STATE.md` (this file) — current position
