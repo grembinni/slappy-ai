@@ -1,16 +1,16 @@
 # Project State
 
 ## Current Status
-- Phase: 1
-- Status: Complete — All 5 plans executed
+- Phase: 2
+- Status: Context gathered — ready for planning
 - Last updated: 2026-05-16
-- Current Plan: 5/5 (all complete)
+- Current Plan: 0/?
 
 ## Project Reference
 See: .planning/PROJECT.md (updated 2026-05-16)
 
 **Core value:** Two players on the same keyboard can immediately start blasting each other.
-**Current focus:** Phase 1 — Foundation
+**Current focus:** Phase 2 — Two Characters Move
 
 ## Phase History
 - Phase 1: Foundation — Complete (2026-05-16) — 5/5 plans, 15 tests passing
@@ -48,15 +48,23 @@ See: .planning/PROJECT.md (updated 2026-05-16)
 - Clear-then-draw pattern: blit background_surface at frame start, never per-beam erasure
 
 ### Open Questions
-- Sprite scale target: 2x (64x64) or 4x (128x128)? → settings.py says 128; confirm before Phase 2
 - Win condition: WIN_SCORE = 50 (match-based, chosen for roadmap)
 - OmnipotentShootingGuy score: shown plainly in HUD
+
+### Phase 2 Decisions
+- PLAYER_SPEED_UP = 200, PLAYER_SPEED_H = 300, PLAYER_SPEED_DOWN = 400 (px/s)
+- Animation interval: ANIM_INTERVAL = 0.15s (~7 Hz); always ticks
+- Idle sprite: Superman.ico / GEvil.ico (dedicated, not last-frame-held)
+- Ground walk sprites (CKent/GEvil) in Phase 2; cycle 1→2→1→3 at 150ms each
+- Ground is visual floor only — characters fly back up freely from GROUND_Y
+- SPRITE_SIZE = 128 confirmed; all Superman sprites confirmed present
 
 ## Session Continuity
 
 Last session: 2026-05-16
-Stopped at: Completed 01-05-PLAN.md (Phase 1 complete)
-Next: Phase 2 — Two Characters Move
+Stopped at: Phase 2 context gathered
+Resume file: .planning/phases/02-two-characters-move/02-CONTEXT.md
+Next: /gsd:plan-phase 2
 
 Start each session by reading:
 1. `.planning/STATE.md` (this file) — current position
