@@ -52,6 +52,34 @@ def copy_wav(src: pathlib.Path, dst: pathlib.Path) -> bool:
     return True
 
 
+def post_process_sprites(sprites_dir: pathlib.Path) -> None:
+    """Apply sprite fixes that can't be expressed via raw ICO files.
+
+    gevil1.png: composite of gevil2 (left foot) + gevil3 (right foot) to produce
+    a neutral two-feet-planted stance that transitions smoothly with the walk cycle.
+    """
+    import numpy as np
+
+    g1 = sprites_dir / "gevil1.png"
+    g2 = sprites_dir / "gevil2.png"
+    g3 = sprites_dir / "gevil3.png"
+    if not (g2.exists() and g3.exists()):
+        return
+
+    arr2 = np.array(Image.open(g2).convert("RGBA"))
+    arr3 = np.array(Image.open(g3).convert("RGBA"))
+
+    # Upper body (y<88): use gevil2 — identical between frames.
+    # Lower body: split at x=64 (image centre).
+    #   Left side  (x<64): gevil2 — provides left foot.
+    #   Right side (x≥64): gevil3 — provides right foot.
+    # Result: both feet clearly planted in the same walk-crouch posture.
+    result = arr2.copy()
+    result[88:, 64:] = arr3[88:, 64:]
+
+    Image.fromarray(result, "RGBA").save(g1, "PNG")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Convert raw_assets/ to assets/")
     parser.add_argument(
@@ -121,6 +149,7 @@ def main():
     if args.dry_run:
         print(f"[DRY RUN] Would convert {ico_count} ICO, {wav_count} WAV, {midi_count} MIDI files")
     else:
+        post_process_sprites(OUT_SPRITES)
         print(f"Done. Converted {ico_count} ICO files, {wav_count} WAV files, {midi_count} MIDI files.")
 
 

@@ -70,7 +70,7 @@ class Player:
             DIR_DOWN:  ("gdown1", "gdown2"),
             DIR_LEFT:  ("gleft1", "gleft2"),
             DIR_RIGHT: ("gright1","gright2"),
-            DIR_IDLE:  ("gevil",  "gevil"),
+            DIR_IDLE:  ("gpose",  "gpose"),
         },
     }
 
