@@ -1,29 +1,30 @@
 # Project State
 
 ## Current Status
-- Phase: 4
-- Status: Complete — all 5 plans executed, 66 tests passing
+- Phase: 5
+- Status: Complete — all 3 plans executed, 86 tests passing
 - Last updated: 2026-05-16
-- Current Plan: 5/5
+- Current Plan: 3/3
 
 ## Project Reference
 See: .planning/PROJECT.md (updated 2026-05-16)
 
 **Core value:** Two players on the same keyboard can immediately start blasting each other.
-**Current focus:** Phase 4 — Death, Respawn & Scoring
+**Current focus:** Phase 5 — Audio
 
 ## Phase History
 - Phase 1: Foundation — Complete (2026-05-16) — 5/5 plans, 15 tests passing
 - Phase 2: Two Characters Move — Complete (2026-05-16) — 4/4 plans, 35 tests passing
 - Phase 3: Combat — Complete (2026-05-16) — 5/5 plans, 50 tests passing
 - Phase 4: Death, Respawn & Scoring — Complete (2026-05-16) — 5/5 plans, 66 tests passing
+- Phase 5: Audio — Complete (2026-05-16) — 3/3 plans, 86 tests passing
 
 ---
 
 ## Performance Metrics
 
 - Requirements total: 50
-- Requirements complete: 34 (ENG-01–05, MOV-01–10, CMB-01–08, DTH-01–07, SCR-01–06)
+- Requirements complete: 40 (ENG-01–05, MOV-01–10, CMB-01–08, DTH-01–07, SCR-01–06, AUD-01–06)
 - Phases total: 6
 - Phases complete: 4
 
@@ -83,11 +84,19 @@ See: .planning/PROJECT.md (updated 2026-05-16)
 - HUD: pygame default font size 28, white text with 2px dark shadow; top-left/right/center
 - Win condition: any displayed score >= WIN_SCORE (50) → GAME_OVER
 
+### Phase 6 Decisions
+- Escape/P toggle pause (PLAYING only); Delete = hard quit; audio pauses with game
+- Splash: dark navy bg (0,0,64), 25 VB6 credits verbatim, random sprite pool at 750ms, controls at bottom
+- Win score selector on splash: Up/Down in steps of 10 (range 10–500, default 50); passed to Game constructor
+- Restart = full Game reinit back to SPLASH; F2/Enter only from GAME_OVER
+- GAME_OVER: black bg, scores + "F2 or Enter to restart", no winner callout
+- New splash.py module; GAME_OVER rendering in game.py; SoundManager gets pause_game()/resume_game()
+
 ## Session Continuity
 
 Last session: 2026-05-16
-Stopped at: Phase 4 complete — 5/5 plans, 66 tests passing
-Next: /gsd:verify-work (verify Phase 4 requirements met), then /gsd:discuss-phase 5 (Sound)
+Stopped at: Phase 6 context gathered — 06-CONTEXT.md written
+Next: /gsd:plan-phase 6 (Screens & Packaging)
 
 Start each session by reading:
 1. `.planning/STATE.md` (this file) — current position
