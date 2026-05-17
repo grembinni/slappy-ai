@@ -19,8 +19,6 @@ class CharState(Enum):
     ALIVE = auto()
     CRASHING = auto()
     DEAD = auto()
-    POSING = auto()
-    RESPAWNING = auto()
 
 
 class Player:
@@ -158,8 +156,8 @@ class Player:
 
     @property
     def score(self) -> int:
-        """Displayed score: raw_pose // 10 + hit_bonus (D-15)."""
-        return self.raw_pose // 10 + self.hit_bonus
+        """Displayed score: raw_pose // 12 + hit_bonus (~20% slower pose accumulation)."""
+        return self.raw_pose // 12 + self.hit_bonus
 
     # ------------------------------------------------------------------ #
     # Update                                                               #

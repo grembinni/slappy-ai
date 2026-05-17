@@ -186,7 +186,7 @@ def test_mouse_click_crash_logic_present():
 
 
 # ---------------------------------------------------------------------------
-# SCR-01: score property uses raw_pose // 10 + hit_bonus formula
+# SCR-01: score property uses raw_pose // 12 + hit_bonus formula (~20% slower than original)
 # ---------------------------------------------------------------------------
 
 def test_score_formula():
@@ -194,7 +194,7 @@ def test_score_formula():
     assert p.score == 0
     p.raw_pose = 30
     p.hit_bonus = 5
-    assert p.score == 30 // 10 + 5  # == 8
+    assert p.score == 30 // 12 + 5  # == 7
     p.raw_pose = 0
     p.hit_bonus = 7
     assert p.score == 7

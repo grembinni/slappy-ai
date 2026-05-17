@@ -17,7 +17,7 @@ CEILING_COLOR = (255, 255, 255)  # vbWhite
 GROUND_COLOR = (0, 128, 0)       # vbGreen = 0x008000
 
 # Gameplay
-WIN_SCORE = 50
+WIN_SCORE = 100
 BEAM_SPEED = 800              # pixels per second — tunable in Phase 3
 GOBLIN_BEAM_COLOR = (0, 200, 0)    # green per CMB-04
 SUPERMAN_BEAM_COLOR = (200, 0, 0)  # red per CMB-04
@@ -27,7 +27,6 @@ DIR_UP = 1
 DIR_DOWN = 2
 DIR_LEFT = 3
 DIR_RIGHT = 4
-DIR_POSE = 5
 DIR_IDLE = 6
 
 # Player Movement (Phase 2)

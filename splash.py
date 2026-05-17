@@ -9,7 +9,9 @@ from settings import (
     SKY_COLOR, CEILING_COLOR, GROUND_COLOR, CEILING_H, GROUND_Y,
 )
 
-_MUSIC_PATH = pathlib.Path(__file__).parent / "assets" / "sounds" / "canyon.wav"
+_INTRO_PATH  = pathlib.Path(__file__).parent / "assets" / "sounds" / "intro.wav"
+_MUSIC_PATH  = pathlib.Path(__file__).parent / "assets" / "sounds" / "canyon.wav"
+_MUSIC_DONE  = pygame.USEREVENT + 1   # fired when intro ends → cue canyon loop
 
 # 25 VB6 credits lines — moved to GAME_OVER screen; kept here for tests (UI-01)
 _CREDITS = [
@@ -34,7 +36,7 @@ _CREDITS = [
     "Software Design Style Consultant: Airman Basic Christen",
     "Secondary Motivator: Staff Sergeant Drennen",
     "Best Boy Grip: Airman Basic Zernicke",
-    "Token Retard: Airman Carlson",
+    "Token Idiot: Airman Carlson",
     "Token Cuban A1C: Airman First Class Magby",
     "",
     "Special Thanks To Hurdle's Mom",
@@ -42,30 +44,25 @@ _CREDITS = [
 
 # Controls summary — referenced by tests (UI-03)
 _CONTROLS = (
-    "Superman: Arrows / Shift / Ctrl / Enter   |   Goblin: ESDF / R / Space / W"
+    "Superman: Arrows / Num0   |   Goblin: WASD / E"
 )
 
-# VB6 lblIntro controls block (frmSuperman.frm lines 332-348)
 _SUP_CONTROLS = [
-    ("Superman's Controls", True),   # (text, is_header)
-    ("UP ARROW   = Up",    False),
-    ("DOWN ARROW  = Down", False),
-    ("LEFT ARROW  = Left", False),
-    ("RIGHT ARROW = Right",False),
-    ("SHIFT       = Shoots",False),
-    ("CONTROL     = Poses", False),
-    ("ENTER       = Restart after death", False),
+    ("Superman's Controls",           True),
+    ("UP ARROW   = Up / Restart",     False),
+    ("DOWN ARROW  = Down",            False),
+    ("LEFT ARROW  = Left",            False),
+    ("RIGHT ARROW = Right",           False),
+    ("NUM 0       = Shoots",          False),
 ]
 
 _GOB_CONTROLS = [
-    ("Goblin's Controls", True),
-    ("E     = Up",    False),
-    ("D     = Down",  False),
-    ("S     = Left",  False),
-    ("F     = Right", False),
-    ("R     = Shoots",False),
-    ("SPACE = Poses", False),
-    ("W     = Restart after death", False),
+    ("Goblin's Controls",    True),
+    ("W     = Up / Restart", False),
+    ("S     = Down",         False),
+    ("A     = Left",         False),
+    ("D     = Right",        False),
+    ("E     = Shoots",       False),
 ]
 
 
@@ -79,17 +76,17 @@ def _bake_background() -> pygame.Surface:
 
 
 def _draw(screen, background, font_title, font_welcome, font_ctrl_hdr,
-          font_ctrl, font_hint, sprite, win_score):
+          font_ctrl, font_hint, sup_sprite, gob_sprite, win_score):
     screen.blit(background, (0, 0))
     cx = SCREEN_W // 2
 
-    def _blit_center(text, font, y, color=(255, 255, 255), shadow=(20, 20, 80)):
+    def _blit_center(text, font, y, color=(0, 0, 0), shadow=(180, 180, 180)):
         sh = font.render(text, True, shadow)
         tx = font.render(text, True, color)
         screen.blit(sh, (cx - sh.get_width() // 2 + 2, y + 2))
         screen.blit(tx, (cx - tx.get_width()  // 2,    y))
 
-    def _blit_left(text, font, x, y, color=(255, 255, 255), shadow=(20, 20, 80)):
+    def _blit_left(text, font, x, y, color=(0, 0, 0), shadow=(180, 180, 180)):
         sh = font.render(text, True, shadow)
         tx = font.render(text, True, color)
         screen.blit(sh, (x + 2, y + 2))
@@ -102,12 +99,7 @@ def _draw(screen, background, font_title, font_welcome, font_ctrl_hdr,
     _blit_center("Welcome to the best game ever.", font_welcome, 76)
     _blit_center("They aren't bugs, they're features.", font_welcome, 104)
 
-    # ── Character sprite ───────────────────────────────────────────────────────
-    scaled = pygame.transform.scale(sprite, (DISPLAY_SPRITE_SIZE, DISPLAY_SPRITE_SIZE))
-    screen.blit(scaled, (cx - DISPLAY_SPRITE_SIZE // 2, 138))
-
     # ── Controls — two columns, centered as a pair ────────────────────────────
-    # Column widths measured conservatively so total block straddles cx evenly.
     # Left col 250px + 60px gap + right col 220px = 530px total → starts at cx-265
     left_x  = cx - 265       # = 375
     right_x = left_x + 310   # = 685  (250 col + 60 gap)
@@ -116,12 +108,12 @@ def _draw(screen, background, font_title, font_welcome, font_ctrl_hdr,
 
     for i, (text, is_hdr) in enumerate(_SUP_CONTROLS):
         font  = font_ctrl_hdr if is_hdr else font_ctrl
-        color = (255, 255, 150) if is_hdr else (255, 255, 255)
+        color = (0, 80, 0) if is_hdr else (0, 0, 0)
         _blit_left(text, font, left_x, ctrl_y + i * line_h, color=color)
 
     for i, (text, is_hdr) in enumerate(_GOB_CONTROLS):
         font  = font_ctrl_hdr if is_hdr else font_ctrl
-        color = (255, 255, 150) if is_hdr else (255, 255, 255)
+        color = (0, 80, 0) if is_hdr else (0, 0, 0)
         _blit_left(text, font, right_x, ctrl_y + i * line_h, color=color)
 
     # ── Win score selector ────────────────────────────────────────────────────
@@ -129,7 +121,16 @@ def _draw(screen, background, font_title, font_welcome, font_ctrl_hdr,
 
     # ── Dismiss hint ──────────────────────────────────────────────────────────
     _blit_center("Press any key or click to start", font_hint, 524,
-                 color=(200, 200, 200))
+                 color=(60, 60, 60))
+
+    # ── Characters on ground — Superman 30% from left, Goblin 30% from right ──
+    ground_y = GROUND_Y - DISPLAY_SPRITE_SIZE
+    sup_x = int(SCREEN_W * 0.30) - DISPLAY_SPRITE_SIZE // 2
+    gob_x = int(SCREEN_W * 0.70) - DISPLAY_SPRITE_SIZE // 2
+    screen.blit(pygame.transform.scale(sup_sprite, (DISPLAY_SPRITE_SIZE, DISPLAY_SPRITE_SIZE)),
+                (sup_x, ground_y))
+    screen.blit(pygame.transform.scale(gob_sprite, (DISPLAY_SPRITE_SIZE, DISPLAY_SPRITE_SIZE)),
+                (gob_x, ground_y))
 
     pygame.display.flip()
 
@@ -137,12 +138,15 @@ def _draw(screen, background, font_title, font_welcome, font_ctrl_hdr,
 def run_splash(screen: pygame.Surface, assets) -> int:
     """Display the start-game splash and return the selected win score.
 
-    Background is the gameplay backdrop. Canyon.wav plays once.
+    Plays intro.wav once, then loops canyon.wav. Superman and Goblin stand on
+    the ground and alternate between idle and intro frames every 750ms.
     Up/Down adjust win score (10–500). Any other key or click starts the game.
     """
+    pygame.event.clear([_MUSIC_DONE])            # discard stale events from previous run
     pygame.mixer.music.stop()
-    pygame.mixer.music.load(str(_MUSIC_PATH))
-    pygame.mixer.music.play(0)   # once, not looped
+    pygame.mixer.music.load(str(_INTRO_PATH))
+    pygame.mixer.music.set_endevent(_MUSIC_DONE) # set AFTER stop — stop() can fire end event
+    pygame.mixer.music.play(0)                   # intro once; MUSIC_DONE fires when it ends
 
     background = _bake_background()
 
@@ -152,11 +156,12 @@ def run_splash(screen: pygame.Surface, assets) -> int:
     font_ctrl     = pygame.font.Font(None, 19)
     font_hint     = pygame.font.Font(None, 22)
 
-    sprite_surfaces = list(assets.sprites.values())
-    current_sprite  = random.choice(sprite_surfaces)
-    sprite_timer    = 0.0
-    win_score       = WIN_SCORE
-    clock           = pygame.time.Clock()
+    sup_frames  = [assets.sprites['ckent1'], assets.sprites['ckentintro']]
+    gob_frames  = [assets.sprites['gevil1'], assets.sprites['gevilintro']]
+    frame_idx   = 0
+    sprite_timer = 0.0
+    win_score    = WIN_SCORE
+    clock        = pygame.time.Clock()
 
     running = True
     while running:
@@ -165,12 +170,16 @@ def run_splash(screen: pygame.Surface, assets) -> int:
 
         if sprite_timer >= 0.75:
             sprite_timer -= 0.75
-            current_sprite = random.choice(sprite_surfaces)
+            frame_idx = 1 - frame_idx
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == _MUSIC_DONE:
+                pygame.mixer.music.set_endevent()   # clear — canyon loops forever
+                pygame.mixer.music.load(str(_MUSIC_PATH))
+                pygame.mixer.music.play(-1)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DELETE:
                     pygame.quit()
@@ -185,6 +194,7 @@ def run_splash(screen: pygame.Surface, assets) -> int:
                 running = False
 
         _draw(screen, background, font_title, font_welcome, font_ctrl_hdr,
-              font_ctrl, font_hint, current_sprite, win_score)
+              font_ctrl, font_hint, sup_frames[frame_idx], gob_frames[frame_idx], win_score)
 
+    pygame.mixer.music.set_endevent()   # clear before handing off to Game
     return win_score

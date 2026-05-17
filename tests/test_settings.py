@@ -15,7 +15,6 @@ def test_fps_constant():
 
 def test_gamestate_enum():
     from game import GameState
-    assert GameState.SPLASH
     assert GameState.PLAYING
     assert GameState.PAUSED
     assert GameState.GAME_OVER
@@ -25,7 +24,7 @@ def test_constants():
     assert settings.SCREEN_W == 1280
     assert settings.SCREEN_H == 800
     assert settings.SPRITE_SIZE == 128
-    assert settings.WIN_SCORE == 50
+    assert settings.WIN_SCORE == 100
     assert settings.BEAM_SPEED == 800
     assert settings.FPS == 60
 
@@ -49,7 +48,6 @@ def test_direction_constants():
     assert settings.DIR_DOWN == 2
     assert settings.DIR_LEFT == 3
     assert settings.DIR_RIGHT == 4
-    assert settings.DIR_POSE == 5
     assert settings.DIR_IDLE == 6
 
 

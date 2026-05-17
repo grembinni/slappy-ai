@@ -108,7 +108,7 @@ def test_splash_controls_text_content():
     """Controls text references both players' key sets (UI-03)."""
     assert "Superman" in splash._CONTROLS
     assert "Goblin" in splash._CONTROLS
-    assert "ESDF" in splash._CONTROLS
+    assert "WASD" in splash._CONTROLS
 
 
 # --- win_score parameter ---

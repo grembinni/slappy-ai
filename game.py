@@ -1,3 +1,4 @@
+import random
 from collections import deque
 
 import pygame
@@ -19,11 +20,11 @@ from settings import (
     DIR_RIGHT,
     DIR_IDLE,
     WIN_SCORE,
+    DISPLAY_SPRITE_SIZE,
 )
 
 
 class GameState(Enum):
-    SPLASH = auto()
     PLAYING = auto()
     PAUSED = auto()
     GAME_OVER = auto()
@@ -53,8 +54,12 @@ class Game:
         self._go_credits_font   = pygame.font.Font(None, 26)
         self._go_credit_idx: int   = 0
         self._go_credit_timer: float = 0.0
+        self._go_sprite_surfaces = list(assets.sprites.values())
+        self._go_current_sprite = (random.choice(self._go_sprite_surfaces)
+                                   if self._go_sprite_surfaces else None)
+        self._go_sprite_timer: float = 0.0
         self.snd = SoundManager(assets.sounds)
-        # No music during gameplay — passport.wav plays on the GAME_OVER screen
+        pygame.mixer.music.stop()   # ensure splash music doesn't bleed into gameplay
 
     def _bake_background(self) -> pygame.Surface:
         """Create the static background: cyan sky, white ceiling, green ground."""
@@ -128,7 +133,14 @@ class Game:
         pygame.display.flip()
 
     def _draw_game_over(self) -> None:
-        """GAME_OVER screen: dark navy background, final scores, restart prompt (D-17–D-19)."""
+        """GAME_OVER screen: dark navy background, final scores, restart prompt (D-17–D-19).
+
+        Vertical rhythm:
+          line_gap    = Superman→Goblin spacing  (40px)
+          section_gap = credits→restart spacing  (80px)
+          title → [line_gap] → scores → [section_gap] → icon → [line_gap] → credits → [section_gap] → restart
+        All content is centered vertically so top and bottom margins are equal.
+        """
         self.screen.fill((0, 0, 64))
         sup, gob = self.players
 
@@ -137,21 +149,46 @@ class Game:
             surf = font.render(text, True, color)
             self.screen.blit(surf, (SCREEN_W // 2 - surf.get_width() // 2, y))
 
-        _blit_center("GAME OVER", self._go_font, SCREEN_H // 2 - 200, (255, 60, 60))
-        _blit_center(f"Superman: {sup.score}",  self._hud_font, SCREEN_H // 2 - 100)
-        _blit_center(f"Goblin: {gob.score}",    self._hud_font, SCREEN_H // 2 - 60)
+        line_gap    = 40
+        section_gap = 80
+        go_h   = self._go_font.get_height()
+        hud_h  = self._hud_font.get_height()
+        cred_h = self._go_credits_font.get_height()
+
+        # Relative y positions (all measured from the top of the content block)
+        ry_title   = 0
+        ry_sup     = go_h + line_gap
+        ry_gob     = ry_sup + line_gap
+        ry_osg     = ry_gob + line_gap
+        ry_last    = ry_osg if self.osg_score > 0 else ry_gob
+        ry_icon    = ry_last + hud_h + section_gap
+        ry_credits = ry_icon + DISPLAY_SPRITE_SIZE + line_gap
+        ry_restart = ry_credits + cred_h + section_gap
+
+        block_h   = ry_restart + hud_h
+        block_top = (SCREEN_H - block_h) // 2
+
+        def ay(ry: int) -> int:
+            return block_top + ry
+
+        _blit_center("GAME OVER", self._go_font, ay(ry_title), (255, 60, 60))
+        _blit_center(f"Superman: {sup.score}", self._hud_font, ay(ry_sup))
+        _blit_center(f"Goblin: {gob.score}",   self._hud_font, ay(ry_gob))
         if self.osg_score > 0:
-            _blit_center(
-                f"OmnipotentShootingGuy: {self.osg_score}",
-                self._hud_font, SCREEN_H // 2 - 20,
+            _blit_center(f"OmnipotentShootingGuy: {self.osg_score}",
+                         self._hud_font, ay(ry_osg))
+
+        if self._go_current_sprite is not None:
+            scaled = pygame.transform.scale(
+                self._go_current_sprite, (DISPLAY_SPRITE_SIZE, DISPLAY_SPRITE_SIZE)
             )
-        # Cycling credits (25 VB6 lines at 1500ms cadence)
+            self.screen.blit(scaled, (SCREEN_W // 2 - DISPLAY_SPRITE_SIZE // 2, ay(ry_icon)))
+
         credit_line = _GO_CREDITS[self._go_credit_idx]
         if credit_line:
-            _blit_center(credit_line, self._go_credits_font,
-                         SCREEN_H // 2 + 40, (255, 255, 100))
-        _blit_center("F2 or Enter to restart", self._hud_font,
-                     SCREEN_H // 2 + 120, (200, 200, 200))
+            _blit_center(credit_line, self._go_credits_font, ay(ry_credits), (255, 255, 100))
+
+        _blit_center("F2 or Enter to restart", self._hud_font, ay(ry_restart), (200, 200, 200))
 
     def _draw_pause_overlay(self) -> None:
         """Semi-transparent dark overlay with centered PAUSED text (UI-05)."""
@@ -235,5 +272,9 @@ class Game:
                 if self._go_credit_timer >= 1.5:
                     self._go_credit_timer -= 1.5
                     self._go_credit_idx = (self._go_credit_idx + 1) % len(_GO_CREDITS)
+                self._go_sprite_timer += dt
+                if self._go_sprite_timer >= 1.5 and self._go_sprite_surfaces:
+                    self._go_sprite_timer -= 1.5
+                    self._go_current_sprite = random.choice(self._go_sprite_surfaces)
 
             self.draw()

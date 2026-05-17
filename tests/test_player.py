@@ -46,7 +46,7 @@ def make_keys(*keys_down):
 def test_charstate_enum():
     # MOV-07
     assert issubclass(CharState, Enum)
-    for name in ("ALIVE", "CRASHING", "DEAD", "POSING", "RESPAWNING"):
+    for name in ("ALIVE", "CRASHING", "DEAD"):
         assert hasattr(CharState, name), f"CharState missing {name}"
 
 
