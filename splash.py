@@ -39,7 +39,7 @@ _CREDITS = [
 ]
 
 _CONTROLS = (
-    "Superman: ↑↓←→ / Shift / Ctrl / Enter   |   Goblin: ESDF / R / Space / W"
+    "Superman: Arrows / Shift / Ctrl / Enter   |   Goblin: ESDF / R / Space / W"
 )
 
 
@@ -57,15 +57,13 @@ def _draw(screen, font_title, font_sub, font_credits, font_winscore,
     # Title with shadow
     _blit_centered("Hurdle's Mom Inc. Intl.", font_title, 25)
 
-    # Subtitle row — "Presents:" right of center, production text left of center
-    presents_surf = font_sub.render("Presents:", True, (255, 255, 255))
-    prod_surf     = font_sub.render("A Hurdle's Mom Inc. Intl. production", True, (200, 200, 200))
-    screen.blit(presents_surf, (cx - presents_surf.get_width() - 20, 110))
-    screen.blit(prod_surf,     (cx + 20,                              110))
+    # Subtitle — two centered lines
+    _blit_centered("Presents:", font_sub, 110)
+    _blit_centered("A Hurdle's Mom Inc. Intl. production", font_sub, 155, color=(200, 200, 200))
 
-    # Character sprite — centered horizontally, in the upper-middle band
+    # Character sprite — centered horizontally, below subtitle
     scaled = pygame.transform.scale(sprite, (DISPLAY_SPRITE_SIZE, DISPLAY_SPRITE_SIZE))
-    sprite_y = 160 + (400 - DISPLAY_SPRITE_SIZE) // 2
+    sprite_y = 210 + (350 - DISPLAY_SPRITE_SIZE) // 2
     screen.blit(scaled, (cx - DISPLAY_SPRITE_SIZE // 2, sprite_y))
 
     # Credits line (discrete: one line shown for 1500ms)
@@ -74,7 +72,7 @@ def _draw(screen, font_title, font_sub, font_credits, font_winscore,
         _blit_centered(line, font_credits, 590, color=(255, 255, 100))
 
     # Win score selector
-    _blit_centered(f"Win Score: {win_score}  (↑/↓ to change)", font_winscore, 650)
+    _blit_centered(f"Win Score: {win_score}  (Up/Down to change)", font_winscore, 650)
 
     # Controls reference
     _blit_centered(_CONTROLS, font_controls, 720, color=(180, 180, 180))
@@ -90,7 +88,7 @@ def run_splash(screen: pygame.Surface, assets) -> int:
     """
     pygame.mixer.music.stop()
     pygame.mixer.music.load(str(_MUSIC_PATH))
-    pygame.mixer.music.play(-1)
+    pygame.mixer.music.play(0)
 
     font_title    = pygame.font.Font(None, 72)
     font_sub      = pygame.font.Font(None, 36)
