@@ -3,6 +3,7 @@ from collections import deque
 import pygame
 from enum import Enum, auto
 from player import Player, CharState
+from hud import draw_hud
 from settings import (
     SCREEN_W,
     SCREEN_H,
@@ -14,6 +15,8 @@ from settings import (
     FPS,
     DIR_LEFT,
     DIR_RIGHT,
+    DIR_IDLE,
+    WIN_SCORE,
 )
 
 
@@ -41,6 +44,8 @@ class Game:
             Player("superman", self.assets),
             Player("goblin", self.assets),
         ]
+        self.osg_score: int = 0
+        self._hud_font = pygame.font.Font(None, 28)
 
     def _bake_background(self) -> pygame.Surface:
         """Create the static background: cyan sky, white ceiling, green ground."""
@@ -71,8 +76,24 @@ class Game:
             for beam in list(opponent.beams):
                 if beam.direction in (DIR_LEFT, DIR_RIGHT):  # CMB-08: VB6 Or-bug fix
                     if player.rect.clipline(beam.start, beam.end):
-                        player.state = CharState.CRASHING
+                        player.start_crash()
+                        self.players[1 - i].hit_bonus += 10
                         break
+
+        # Pose score: +1 per frame idle-airborne (SCR-02)
+        for player in self.players:
+            if (player.state == CharState.ALIVE
+                    and player._direction == DIR_IDLE
+                    and not player._on_ground):
+                player.raw_pose += 1
+
+        # Win condition (SCR-06)
+        if self.state == GameState.PLAYING:
+            for player in self.players:
+                if player.score >= WIN_SCORE:
+                    self.state = GameState.GAME_OVER
+            if self.osg_score >= WIN_SCORE:
+                self.state = GameState.GAME_OVER
 
     def draw(self) -> None:
         """Render one frame: blit background then flip display."""
@@ -82,6 +103,7 @@ class Game:
         for player in self.players:
             for beam in player.beams:
                 beam.draw(self.screen)
+        draw_hud(self.screen, self.players, self.osg_score, self._hud_font)
         pygame.display.flip()
 
     def run(self) -> None:
@@ -105,5 +127,18 @@ class Game:
                         if gob.state == CharState.ALIVE:
                             d = gob.facing if gob.facing in (DIR_LEFT, DIR_RIGHT) else DIR_RIGHT
                             gob.fire(d)
+                    elif event.key == pygame.K_UP:
+                        sup = self.players[0]
+                        if sup.state == CharState.DEAD:
+                            sup.respawn()
+                    elif event.key == pygame.K_w:
+                        gob = self.players[1]
+                        if gob.state == CharState.DEAD:
+                            gob.respawn()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    for player in self.players:
+                        if player.state == CharState.ALIVE and player.rect.collidepoint(event.pos):
+                            player.start_crash()
+                            self.osg_score += 1
             self.update(dt)
             self.draw()
