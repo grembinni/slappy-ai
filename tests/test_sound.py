@@ -191,12 +191,12 @@ def test_game_update_contains_death_cry_trigger():
     src = inspect.getsource(g.update)
     assert 'play_death_cry' in src
 
-def test_game_update_contains_stop_music_on_game_over():
-    """game.update() source contains stop_music on GAME_OVER transition."""
+def test_game_update_starts_credits_music_on_game_over():
+    """game.update() plays passport.wav (play_playing_music) on GAME_OVER transition."""
     import inspect
     g = make_game()
     src = inspect.getsource(g.update)
-    assert 'stop_music' in src
+    assert 'play_playing_music' in src
 
 def test_game_run_contains_laser_and_mute_handlers():
     """game.run() source contains play_laser and K_m mute handler."""

@@ -5,6 +5,7 @@ from enum import Enum, auto
 from player import Player, CharState
 from hud import draw_hud
 from sound import SoundManager
+from splash import _CREDITS as _GO_CREDITS
 from settings import (
     SCREEN_W,
     SCREEN_H,
@@ -49,8 +50,11 @@ class Game:
         self._hud_font = pygame.font.Font(None, 28)
         self.win_score = win_score
         self._go_font  = pygame.font.Font(None, 56)
+        self._go_credits_font   = pygame.font.Font(None, 26)
+        self._go_credit_idx: int   = 0
+        self._go_credit_timer: float = 0.0
         self.snd = SoundManager(assets.sounds)
-        self.snd.play_playing_music()
+        # No music during gameplay — passport.wav plays on the GAME_OVER screen
 
     def _bake_background(self) -> pygame.Surface:
         """Create the static background: cyan sky, white ceiling, green ground."""
@@ -105,7 +109,7 @@ class Game:
             if self.osg_score >= self.win_score:
                 self.state = GameState.GAME_OVER
             if self.state == GameState.GAME_OVER:
-                self.snd.stop_music()
+                self.snd.play_playing_music()   # passport.wav plays on credits page
 
     def draw(self) -> None:
         """Render one frame based on current game state."""
@@ -133,16 +137,21 @@ class Game:
             surf = font.render(text, True, color)
             self.screen.blit(surf, (SCREEN_W // 2 - surf.get_width() // 2, y))
 
-        _blit_center("GAME OVER", self._go_font, SCREEN_H // 2 - 160, (255, 60, 60))
-        _blit_center(f"Superman: {sup.score}",  self._hud_font, SCREEN_H // 2 - 60)
-        _blit_center(f"Goblin: {gob.score}",    self._hud_font, SCREEN_H // 2 - 20)
+        _blit_center("GAME OVER", self._go_font, SCREEN_H // 2 - 200, (255, 60, 60))
+        _blit_center(f"Superman: {sup.score}",  self._hud_font, SCREEN_H // 2 - 100)
+        _blit_center(f"Goblin: {gob.score}",    self._hud_font, SCREEN_H // 2 - 60)
         if self.osg_score > 0:
             _blit_center(
                 f"OmnipotentShootingGuy: {self.osg_score}",
-                self._hud_font, SCREEN_H // 2 + 20,
+                self._hud_font, SCREEN_H // 2 - 20,
             )
+        # Cycling credits (25 VB6 lines at 1500ms cadence)
+        credit_line = _GO_CREDITS[self._go_credit_idx]
+        if credit_line:
+            _blit_center(credit_line, self._go_credits_font,
+                         SCREEN_H // 2 + 40, (255, 255, 100))
         _blit_center("F2 or Enter to restart", self._hud_font,
-                     SCREEN_H // 2 + 80, (200, 200, 200))
+                     SCREEN_H // 2 + 120, (200, 200, 200))
 
     def _draw_pause_overlay(self) -> None:
         """Semi-transparent dark overlay with centered PAUSED text (UI-05)."""
@@ -221,5 +230,10 @@ class Game:
             # Update only when actively playing
             if self.state == GameState.PLAYING:
                 self.update(dt)
+            elif self.state == GameState.GAME_OVER:
+                self._go_credit_timer += dt
+                if self._go_credit_timer >= 1.5:
+                    self._go_credit_timer -= 1.5
+                    self._go_credit_idx = (self._go_credit_idx + 1) % len(_GO_CREDITS)
 
             self.draw()
