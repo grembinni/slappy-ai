@@ -2,9 +2,9 @@
 
 ## Current Status
 - Phase: 4
-- Status: Ready — Phase 3 complete
+- Status: Complete — all 5 plans executed, 66 tests passing
 - Last updated: 2026-05-16
-- Current Plan: 0/?
+- Current Plan: 5/5
 
 ## Project Reference
 See: .planning/PROJECT.md (updated 2026-05-16)
@@ -16,21 +16,23 @@ See: .planning/PROJECT.md (updated 2026-05-16)
 - Phase 1: Foundation — Complete (2026-05-16) — 5/5 plans, 15 tests passing
 - Phase 2: Two Characters Move — Complete (2026-05-16) — 4/4 plans, 35 tests passing
 - Phase 3: Combat — Complete (2026-05-16) — 5/5 plans, 50 tests passing
+- Phase 4: Death, Respawn & Scoring — Complete (2026-05-16) — 5/5 plans, 66 tests passing
 
 ---
 
 ## Performance Metrics
 
 - Requirements total: 50
-- Requirements complete: 21 (ENG-01–05, MOV-01–10, CMB-01–08)
+- Requirements complete: 34 (ENG-01–05, MOV-01–10, CMB-01–08, DTH-01–07, SCR-01–06)
 - Phases total: 6
-- Phases complete: 3
+- Phases complete: 4
 
 | Phase | Plan | Duration (s) | Tasks | Files |
 |-------|------|-------------|-------|-------|
 | 01 | 05 | 162 | 3 | 5 |
 | 02 | 04 | — | 4 | 4 |
 | 03 | 05 | — | 5 | 3 |
+| 04 | 05 | — | 5 | 5 |
 
 ## Accumulated Context
 
@@ -69,11 +71,23 @@ See: .planning/PROJECT.md (updated 2026-05-16)
 - CRASHING state: freeze in place (pure stub) — Phase 4 adds animation
 - VB6 Or-bug fix: `beam.direction in (DIR_LEFT, DIR_RIGHT)` — locked
 
+### Phase 4 Decisions
+- SPIN_INTERVAL = 0.1s (100ms per spin frame, loops sspin1→2→3→4→1)
+- Fixed fall speed: PLAYER_SPEED_DOWN (500 px/s), dt-scaled, no gravity
+- Snap to GROUND_STOP_Y on landing → DEAD state (no bounce)
+- Pose scoring: automatic when ALIVE + DIR_IDLE + not on_ground (+1/frame; displayed = raw_pose//10)
+- Hit bonus: +10 per beam hit landed (shooter gets hit_bonus += 10)
+- Respawn: K_UP for Superman, K_w for Goblin (state-gated to DEAD, no conflict with move-up)
+- Respawn zone: random x full width, random y upper 70% of play area
+- OSG score: MOUSEBUTTONDOWN on living player → start_crash() + osg_score++; hidden in HUD when 0
+- HUD: pygame default font size 28, white text with 2px dark shadow; top-left/right/center
+- Win condition: any displayed score >= WIN_SCORE (50) → GAME_OVER
+
 ## Session Continuity
 
 Last session: 2026-05-16
-Stopped at: Phase 4 context gathered — crash animation, respawn keys, scoring formula, HUD decisions locked
-Next: /gsd:plan-phase 4 (Death, Respawn & Scoring — create PLAN.md)
+Stopped at: Phase 4 complete — 5/5 plans, 66 tests passing
+Next: /gsd:verify-work (verify Phase 4 requirements met), then /gsd:discuss-phase 5 (Sound)
 
 Start each session by reading:
 1. `.planning/STATE.md` (this file) — current position
