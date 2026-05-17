@@ -1,3 +1,4 @@
+import random
 from collections import deque
 
 import pygame
@@ -10,6 +11,7 @@ from settings import (
     PLAYER_SPEED_UP, PLAYER_SPEED_H, PLAYER_SPEED_DOWN, ANIM_INTERVAL,
     SUPERMAN_BEAM_COLOR, GOBLIN_BEAM_COLOR,
     WRAP_VISIBLE_PX,
+    SPIN_INTERVAL,
 )
 
 
@@ -93,6 +95,16 @@ class Player:
         "goblin":   "gevil",
     }
 
+    _SPIN_SPRITES: dict = {
+        "superman": ["sspin1", "sspin2", "sspin3", "sspin4"],
+        "goblin":   ["gspin1", "gspin2", "gspin3", "gspin4"],
+    }
+
+    _DEATH_SPRITE: dict = {
+        "superman": "sdeath",
+        "goblin":   "gdeath",
+    }
+
     # ------------------------------------------------------------------ #
     # Lifecycle                                                            #
     # ------------------------------------------------------------------ #
@@ -128,6 +140,13 @@ class Player:
         # Beam ring buffer — populated by fire(), iterated by game.py (D-08)
         self.beams: deque = deque(maxlen=10)
 
+        # Scoring (Phase 4)
+        self.raw_pose: int = 0      # +1 per frame idle-airborne (D-12, D-14)
+        self.hit_bonus: int = 0     # +10 per beam hit landed (D-14)
+        # Crash animation state
+        self._spin_timer: float = 0.0
+        self._spin_frame: int = 0   # 0–3, indexes into _SPIN_SPRITES
+
     # ------------------------------------------------------------------ #
     # Properties                                                           #
     # ------------------------------------------------------------------ #
@@ -136,6 +155,11 @@ class Player:
     def rect(self) -> pygame.Rect:
         """Axis-aligned bounding rect — used by Phase 3 beam collision."""
         return pygame.Rect(int(self.x), int(self.y), DISPLAY_SPRITE_SIZE, DISPLAY_SPRITE_SIZE)
+
+    @property
+    def score(self) -> int:
+        """Displayed score: raw_pose // 10 + hit_bonus (D-15)."""
+        return self.raw_pose // 10 + self.hit_bonus
 
     # ------------------------------------------------------------------ #
     # Update                                                               #
@@ -147,6 +171,9 @@ class Player:
         *keys* is the return value of ``pygame.key.get_pressed()`` supplied by
         the caller (game.py) — player.py never calls get_pressed() itself (MOV-03).
         """
+        if self.state == CharState.CRASHING:
+            self._update_crashing(dt)
+            return
         if self.state != CharState.ALIVE:
             return
 
@@ -216,6 +243,47 @@ class Player:
         self._moving_h = (dx != 0)
 
     # ------------------------------------------------------------------ #
+    # Crash / death / respawn                                             #
+    # ------------------------------------------------------------------ #
+
+    def _update_crashing(self, dt: float) -> None:
+        """Fall straight down and advance spin sprite cycle (DTH-02, DTH-03)."""
+        self.y += PLAYER_SPEED_DOWN * dt
+        if self.y >= GROUND_STOP_Y:
+            self.y = float(GROUND_STOP_Y)
+            self._on_ground = True
+            self.state = CharState.DEAD
+            return
+        self._spin_timer += dt
+        while self._spin_timer >= SPIN_INTERVAL:
+            self._spin_timer -= SPIN_INTERVAL
+            self._spin_frame = (self._spin_frame + 1) % 4
+
+    def start_crash(self) -> None:
+        """Transition to CRASHING state and reset spin animation."""
+        self.state = CharState.CRASHING
+        self._spin_timer = 0.0
+        self._spin_frame = 0
+
+    def respawn(self) -> None:
+        """Return to ALIVE at a random valid position (D-08, D-09, DTH-06)."""
+        play_h = GROUND_STOP_Y - CEILING_STOP_Y
+        self.x = random.uniform(0, SCREEN_W - DISPLAY_SPRITE_SIZE)
+        self.y = random.uniform(
+            CEILING_STOP_Y,
+            CEILING_STOP_Y + 0.7 * play_h,
+        )
+        self.state = CharState.ALIVE
+        self._spin_timer = 0.0
+        self._spin_frame = 0
+        self._anim_timer = 0.0
+        self._anim_frame = 0
+        self._direction = DIR_IDLE
+        self._on_ground = False
+        self._moving_h = False
+        self.beams.clear()
+
+    # ------------------------------------------------------------------ #
     # Beam firing                                                          #
     # ------------------------------------------------------------------ #
 
@@ -248,6 +316,10 @@ class Player:
 
     def _get_sprite_key(self) -> str:
         """Return the correct sprite key for the current movement/ground state."""
+        if self.state == CharState.DEAD:
+            return self._DEATH_SPRITE[self.character]
+        if self.state == CharState.CRASHING:
+            return self._SPIN_SPRITES[self.character][self._spin_frame]
         if self._on_ground:
             if self._moving_h:
                 idx = self._GROUND_WALK_CYCLE[self._ground_walk_step]
