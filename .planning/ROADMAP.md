@@ -16,8 +16,8 @@ polish and make the game shippable.
 - [x] **Phase 2: Two Characters Move** — Both characters appear, move with keyboard, wrap, respect ground/ceiling
 - [x] **Phase 3: Combat** — Beams fire, travel, wrap, and hit detection triggers CRASHING state
 - [ ] **Phase 4: Death, Respawn & Scoring** — Crash animation, DEAD state, respawn keys, HUD scores, win condition
-- [ ] **Phase 5: Audio** — All WAVs play on correct events, background music loops, M mutes
-- [ ] **Phase 6: Screens & Packaging** — Splash/credits, pause, GAME_OVER screen, mouse-click mechanic, PyInstaller .exe
+- [x] **Phase 5: Audio** — All WAVs play on correct events, background music loops, M mutes
+- [x] **Phase 6: Screens & Packaging** — Splash/credits, pause, GAME_OVER screen, mouse-click mechanic, PyInstaller .exe
 
 ---
 
@@ -124,7 +124,17 @@ Plans:
 2. Background music (converted `passport.mid` → WAV) loops continuously while in `PLAYING` state without audible gaps
 3. Intro music (converted `canyon.mid` → WAV) plays during `SPLASH` state
 4. Pressing M silences all audio channels immediately; pressing M again restores all audio at previous levels
-**Plans:** TBD
+**Plans:** 3 plans
+
+Plans:
+**Wave 1:**
+- [ ] 05-01-PLAN.md — sound.py: SoundManager class (SFX, music, mute toggle)
+
+**Wave 2** *(blocked on Wave 1)*:
+- [ ] 05-02-PLAN.md — game.py: wire SoundManager into Game (import, init, fire/collision/explode/mute/GAME_OVER trigger calls)
+
+**Wave 3** *(blocked on Wave 2)*:
+- [ ] 05-03-PLAN.md — tests/test_sound.py: 20 unit + integration tests for AUD-01 through AUD-06
 
 ### Phase 6: Screens & Packaging
 **Goal:** The game is shippable — it has a splash/credits screen, pause, a proper game-over screen, the secret mouse mechanic, and a standalone Windows .exe.
@@ -137,8 +147,22 @@ Plans:
 3. The GAME_OVER screen shows final scores for all three players and the prompt "F2 or Enter to restart"; F2 starts a new game from any screen
 4. Clicking on a living character kills them and increments the OmnipotentShootingGuy score
 5. `pyinstaller --onedir --windowed` produces a `dist/` folder with a runnable `.exe` that bundles all assets — game launches on a machine without Python installed
-**Plans:** TBD
+**Plans:** 5 plans
 **UI hint**: yes
+
+Plans:
+**Wave 1** (parallel):
+- [x] 06-01-PLAN.md — sound.py: add pause_game() and resume_game() methods (D-03)
+- [x] 06-02-PLAN.md — splash.py: new SplashScreen module (UI-01–04, win score selector)
+
+**Wave 2** *(blocked on Wave 1 — game.py needs pause_game/resume_game; main.py needs run_splash)*:
+- [x] 06-03-PLAN.md — game.py + main.py: PAUSED/GAME_OVER state machine, win_score param, restart loop (UI-05, UI-06, UI-07)
+
+**Wave 3** *(blocked on Wave 2)*:
+- [x] 06-04-PLAN.md — PyInstaller: slappy.spec, build.bat, smoke test (PKG-01)
+
+**Wave 4** *(blocked on Wave 3)*:
+- [x] 06-05-PLAN.md — tests/test_screens.py: 22 tests covering UI-01–07 and PKG-01
 
 ---
 
@@ -149,6 +173,6 @@ Plans:
 | 1. Foundation | 5/5 | Complete | 2026-05-16 |
 | 2. Two Characters Move | 4/4 | Complete | 2026-05-16 |
 | 3. Combat | 5/5 | Complete | 2026-05-16 |
-| 4. Death, Respawn & Scoring | 0/? | Not started | - |
-| 5. Audio | 0/? | Not started | - |
-| 6. Screens & Packaging | 0/? | Not started | - |
+| 4. Death, Respawn & Scoring | 5/5 | Complete | 2026-05-16 |
+| 5. Audio | 3/3 | Complete | 2026-05-16 |
+| 6. Screens & Packaging | 5/5 | Complete | 2026-05-16 |

@@ -1,16 +1,16 @@
 # Project State
 
 ## Current Status
-- Phase: 5
-- Status: Complete — all 3 plans executed, 86 tests passing
+- Phase: 6
+- Status: Complete — all 5 plans executed, 108 tests passing
 - Last updated: 2026-05-16
-- Current Plan: 3/3
+- Current Plan: 5/5
 
 ## Project Reference
 See: .planning/PROJECT.md (updated 2026-05-16)
 
 **Core value:** Two players on the same keyboard can immediately start blasting each other.
-**Current focus:** Phase 5 — Audio
+**Current focus:** Phase 6 — Screens & Packaging (COMPLETE — all 6 phases done)
 
 ## Phase History
 - Phase 1: Foundation — Complete (2026-05-16) — 5/5 plans, 15 tests passing
@@ -18,15 +18,16 @@ See: .planning/PROJECT.md (updated 2026-05-16)
 - Phase 3: Combat — Complete (2026-05-16) — 5/5 plans, 50 tests passing
 - Phase 4: Death, Respawn & Scoring — Complete (2026-05-16) — 5/5 plans, 66 tests passing
 - Phase 5: Audio — Complete (2026-05-16) — 3/3 plans, 86 tests passing
+- Phase 6: Screens & Packaging — Complete (2026-05-16) — 5/5 plans, 108 tests passing
 
 ---
 
 ## Performance Metrics
 
 - Requirements total: 50
-- Requirements complete: 40 (ENG-01–05, MOV-01–10, CMB-01–08, DTH-01–07, SCR-01–06, AUD-01–06)
+- Requirements complete: 50 (ENG-01–05, MOV-01–10, CMB-01–08, DTH-01–07, SCR-01–06, AUD-01–06, UI-01–07, PKG-01)
 - Phases total: 6
-- Phases complete: 4
+- Phases complete: 6
 
 | Phase | Plan | Duration (s) | Tasks | Files |
 |-------|------|-------------|-------|-------|
@@ -95,8 +96,8 @@ See: .planning/PROJECT.md (updated 2026-05-16)
 ## Session Continuity
 
 Last session: 2026-05-16
-Stopped at: Phase 6 context gathered — 06-CONTEXT.md written
-Next: /gsd:plan-phase 6 (Screens & Packaging)
+Stopped at: Phase 6 complete — all 6 phases shipped
+Next: /gsd:verify-work or /gsd:complete-milestone
 
 Start each session by reading:
 1. `.planning/STATE.md` (this file) — current position

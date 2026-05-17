@@ -46,3 +46,13 @@ class SoundManager:
         else:
             pygame.mixer.unpause()
             pygame.mixer.music.unpause()
+
+    def pause_game(self) -> None:
+        if not self._muted:
+            pygame.mixer.pause()
+            pygame.mixer.music.pause()
+
+    def resume_game(self) -> None:
+        if not self._muted:
+            pygame.mixer.unpause()
+            pygame.mixer.music.unpause()

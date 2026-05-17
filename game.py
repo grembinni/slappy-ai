@@ -35,7 +35,7 @@ class Game:
     (clear-then-draw pattern — no per-entity erasure).
     """
 
-    def __init__(self, screen: pygame.Surface, assets):
+    def __init__(self, screen: pygame.Surface, assets, win_score: int = WIN_SCORE):
         self.screen = screen
         self.assets = assets
         self.clock = pygame.time.Clock()
@@ -47,6 +47,8 @@ class Game:
         ]
         self.osg_score: int = 0
         self._hud_font = pygame.font.Font(None, 28)
+        self.win_score = win_score
+        self._go_font  = pygame.font.Font(None, 56)
         self.snd = SoundManager(assets.sounds)
         self.snd.play_playing_music()
 
@@ -98,62 +100,126 @@ class Game:
         # Win condition (SCR-06)
         if self.state == GameState.PLAYING:
             for player in self.players:
-                if player.score >= WIN_SCORE:
+                if player.score >= self.win_score:
                     self.state = GameState.GAME_OVER
-            if self.osg_score >= WIN_SCORE:
+            if self.osg_score >= self.win_score:
                 self.state = GameState.GAME_OVER
             if self.state == GameState.GAME_OVER:
                 self.snd.stop_music()
 
     def draw(self) -> None:
-        """Render one frame: blit background then flip display."""
-        self.screen.blit(self.background, (0, 0))
-        for player in self.players:
-            player.draw(self.screen)
-        for player in self.players:
-            for beam in player.beams:
-                beam.draw(self.screen)
-        draw_hud(self.screen, self.players, self.osg_score, self._hud_font)
+        """Render one frame based on current game state."""
+        if self.state == GameState.GAME_OVER:
+            self._draw_game_over()
+        else:
+            self.screen.blit(self.background, (0, 0))
+            for player in self.players:
+                player.draw(self.screen)
+            for player in self.players:
+                for beam in player.beams:
+                    beam.draw(self.screen)
+            draw_hud(self.screen, self.players, self.osg_score, self._hud_font)
+            if self.state == GameState.PAUSED:
+                self._draw_pause_overlay()
         pygame.display.flip()
 
-    def run(self) -> None:
-        """Main loop. Exits on window close (QUIT) or Delete key."""
+    def _draw_game_over(self) -> None:
+        """GAME_OVER screen: black background, final scores, restart prompt (D-17–D-19)."""
+        self.screen.fill((0, 0, 0))
+        sup, gob = self.players
+
+        def _blit_center(text: str, font: pygame.font.Font, y: int,
+                         color=(255, 255, 255)) -> None:
+            surf = font.render(text, True, color)
+            self.screen.blit(surf, (SCREEN_W // 2 - surf.get_width() // 2, y))
+
+        _blit_center("GAME OVER", self._go_font, SCREEN_H // 2 - 160, (255, 60, 60))
+        _blit_center(f"Superman: {sup.score}",  self._hud_font, SCREEN_H // 2 - 60)
+        _blit_center(f"Goblin: {gob.score}",    self._hud_font, SCREEN_H // 2 - 20)
+        if self.osg_score > 0:
+            _blit_center(
+                f"OmnipotentShootingGuy: {self.osg_score}",
+                self._hud_font, SCREEN_H // 2 + 20,
+            )
+        _blit_center("F2 or Enter to restart", self._hud_font,
+                     SCREEN_H // 2 + 80, (200, 200, 200))
+
+    def _draw_pause_overlay(self) -> None:
+        """Semi-transparent dark overlay with centered PAUSED text (UI-05)."""
+        overlay = pygame.Surface((SCREEN_W, SCREEN_H), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 140))
+        self.screen.blit(overlay, (0, 0))
+        pause_font = pygame.font.Font(None, 96)
+        surf = pause_font.render("PAUSED", True, (255, 255, 255))
+        self.screen.blit(surf, (SCREEN_W // 2 - surf.get_width() // 2,
+                                SCREEN_H // 2 - surf.get_height() // 2))
+
+    def run(self):
+        """Main loop. Returns 'restart' when F2/Enter pressed in GAME_OVER, else None."""
         running = True
         while running:
             dt = self.clock.tick(FPS) / 1000.0
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+
                 elif event.type == pygame.KEYDOWN:
+                    # Hard quit — always active
                     if event.key == pygame.K_DELETE:
                         running = False
-                    elif event.key == pygame.K_KP0:
-                        sup = self.players[0]
-                        if sup.state == CharState.ALIVE:
-                            d = sup.facing if sup.facing in (DIR_LEFT, DIR_RIGHT) else DIR_LEFT
-                            sup.fire(d)
-                            self.snd.play_laser()
-                    elif event.key == pygame.K_e:
-                        gob = self.players[1]
-                        if gob.state == CharState.ALIVE:
-                            d = gob.facing if gob.facing in (DIR_LEFT, DIR_RIGHT) else DIR_RIGHT
-                            gob.fire(d)
-                            self.snd.play_laser()
-                    elif event.key == pygame.K_UP:
-                        sup = self.players[0]
-                        if sup.state == CharState.DEAD:
-                            sup.respawn()
-                    elif event.key == pygame.K_w:
-                        gob = self.players[1]
-                        if gob.state == CharState.DEAD:
-                            gob.respawn()
+
+                    # Mute — active in any game state
                     elif event.key == pygame.K_m:
                         self.snd.toggle_mute()
+
+                    # Pause toggle — only when PLAYING or PAUSED
+                    elif event.key in (pygame.K_p, pygame.K_ESCAPE):
+                        if self.state == GameState.PLAYING:
+                            self.state = GameState.PAUSED
+                            self.snd.pause_game()
+                        elif self.state == GameState.PAUSED:
+                            self.state = GameState.PLAYING
+                            self.snd.resume_game()
+
+                    # Restart — only from GAME_OVER
+                    elif event.key in (pygame.K_F2, pygame.K_RETURN):
+                        if self.state == GameState.GAME_OVER:
+                            return "restart"
+
+                    # All remaining keys only active during PLAYING
+                    elif self.state == GameState.PLAYING:
+                        if event.key == pygame.K_KP0:
+                            sup = self.players[0]
+                            if sup.state == CharState.ALIVE:
+                                d = sup.facing if sup.facing in (DIR_LEFT, DIR_RIGHT) else DIR_LEFT
+                                sup.fire(d)
+                                self.snd.play_laser()
+                        elif event.key == pygame.K_e:
+                            gob = self.players[1]
+                            if gob.state == CharState.ALIVE:
+                                d = gob.facing if gob.facing in (DIR_LEFT, DIR_RIGHT) else DIR_RIGHT
+                                gob.fire(d)
+                                self.snd.play_laser()
+                        elif event.key == pygame.K_UP:
+                            sup = self.players[0]
+                            if sup.state == CharState.DEAD:
+                                sup.respawn()
+                        elif event.key == pygame.K_w:
+                            gob = self.players[1]
+                            if gob.state == CharState.DEAD:
+                                gob.respawn()
+
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    for player in self.players:
-                        if player.state == CharState.ALIVE and player.rect.collidepoint(event.pos):
-                            player.start_crash()
-                            self.snd.play_death_cry()
-                            self.osg_score += 1
-            self.update(dt)
+                    if self.state == GameState.PLAYING:
+                        for player in self.players:
+                            if player.state == CharState.ALIVE and player.rect.collidepoint(event.pos):
+                                player.start_crash()
+                                self.snd.play_death_cry()
+                                self.osg_score += 1
+
+            # Update only when actively playing
+            if self.state == GameState.PLAYING:
+                self.update(dt)
+
             self.draw()
