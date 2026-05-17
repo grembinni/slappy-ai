@@ -4,6 +4,7 @@ import pygame
 from enum import Enum, auto
 from player import Player, CharState
 from hud import draw_hud
+from sound import SoundManager
 from settings import (
     SCREEN_W,
     SCREEN_H,
@@ -46,6 +47,8 @@ class Game:
         ]
         self.osg_score: int = 0
         self._hud_font = pygame.font.Font(None, 28)
+        self.snd = SoundManager(assets.sounds)
+        self.snd.play_playing_music()
 
     def _bake_background(self) -> pygame.Surface:
         """Create the static background: cyan sky, white ceiling, green ground."""
@@ -58,8 +61,12 @@ class Game:
     def update(self, dt: float) -> None:
         """Update all game entities by dt seconds."""
         keys = pygame.key.get_pressed()
+        was_crashing = [p.state == CharState.CRASHING for p in self.players]
         for player in self.players:
             player.update(dt, keys)
+        for i, player in enumerate(self.players):
+            if was_crashing[i] and player.state == CharState.DEAD:
+                self.snd.play_explode()
 
         # Update beams and remove expired ones (CMB-06)
         for player in self.players:
@@ -77,6 +84,7 @@ class Game:
                 if beam.direction in (DIR_LEFT, DIR_RIGHT):  # CMB-08: VB6 Or-bug fix
                     if player.rect.clipline(beam.start, beam.end):
                         player.start_crash()
+                        self.snd.play_death_cry()
                         self.players[1 - i].hit_bonus += 10
                         break
 
@@ -94,6 +102,8 @@ class Game:
                     self.state = GameState.GAME_OVER
             if self.osg_score >= WIN_SCORE:
                 self.state = GameState.GAME_OVER
+            if self.state == GameState.GAME_OVER:
+                self.snd.stop_music()
 
     def draw(self) -> None:
         """Render one frame: blit background then flip display."""
@@ -122,11 +132,13 @@ class Game:
                         if sup.state == CharState.ALIVE:
                             d = sup.facing if sup.facing in (DIR_LEFT, DIR_RIGHT) else DIR_LEFT
                             sup.fire(d)
+                            self.snd.play_laser()
                     elif event.key == pygame.K_e:
                         gob = self.players[1]
                         if gob.state == CharState.ALIVE:
                             d = gob.facing if gob.facing in (DIR_LEFT, DIR_RIGHT) else DIR_RIGHT
                             gob.fire(d)
+                            self.snd.play_laser()
                     elif event.key == pygame.K_UP:
                         sup = self.players[0]
                         if sup.state == CharState.DEAD:
@@ -135,10 +147,13 @@ class Game:
                         gob = self.players[1]
                         if gob.state == CharState.DEAD:
                             gob.respawn()
+                    elif event.key == pygame.K_m:
+                        self.snd.toggle_mute()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     for player in self.players:
                         if player.state == CharState.ALIVE and player.rect.collidepoint(event.pos):
                             player.start_crash()
+                            self.snd.play_death_cry()
                             self.osg_score += 1
             self.update(dt)
             self.draw()
