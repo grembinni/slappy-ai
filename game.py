@@ -124,8 +124,8 @@ class Game:
         pygame.display.flip()
 
     def _draw_game_over(self) -> None:
-        """GAME_OVER screen: black background, final scores, restart prompt (D-17–D-19)."""
-        self.screen.fill((0, 0, 0))
+        """GAME_OVER screen: dark navy background, final scores, restart prompt (D-17–D-19)."""
+        self.screen.fill((0, 0, 64))
         sup, gob = self.players
 
         def _blit_center(text: str, font: pygame.font.Font, y: int,
