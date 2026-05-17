@@ -14,7 +14,7 @@ polish and make the game shippable.
 
 - [x] **Phase 1: Foundation** — Asset pipeline, settings, game loop skeleton, background renders in window
 - [x] **Phase 2: Two Characters Move** — Both characters appear, move with keyboard, wrap, respect ground/ceiling
-- [ ] **Phase 3: Combat** — Beams fire, travel, wrap, and hit detection triggers CRASHING state
+- [x] **Phase 3: Combat** — Beams fire, travel, wrap, and hit detection triggers CRASHING state
 - [ ] **Phase 4: Death, Respawn & Scoring** — Crash animation, DEAD state, respawn keys, HUD scores, win condition
 - [ ] **Phase 5: Audio** — All WAVs play on correct events, background music loops, M mutes
 - [ ] **Phase 6: Screens & Packaging** — Splash/credits, pause, GAME_OVER screen, mouse-click mechanic, PyInstaller .exe
@@ -85,7 +85,21 @@ Plans:
 3. A beam that exits the right edge reappears on the left edge (and vice versa); beams expire after 2 full wraps
 4. When a beam's line segment intersects the opponent's rect, the opponent immediately enters `CRASHING` state
 5. The collision direction check uses `beam.direction in (LEFT, RIGHT)` — not `== LEFT or RIGHT` — confirming the VB6 Or-bug is fixed
-**Plans:** TBD
+**Plans:** 5 plans
+
+Plans:
+**Wave 1:**
+- [x] 03-01-PLAN.md — settings.py: add BEAM_LENGTH = 40, BEAM_WIDTH = 3
+
+**Wave 2** *(blocked on Wave 1)*:
+- [x] 03-02-PLAN.md — beam.py: Beam class (update, draw, start/end endpoints, wrap, expiry)
+
+**Wave 3** *(blocked on Wave 2)*:
+- [x] 03-03-PLAN.md — player.py: add self.beams deque and fire() method
+
+**Wave 4** *(parallel, blocked on Wave 3)*:
+- [x] 03-04-PLAN.md — game.py: wire fire KEYDOWN handlers, beam update loop, collision check, beam draw
+- [x] 03-05-PLAN.md — tests/test_beam.py: 15 unit tests for CMB-01 through CMB-08
 
 ### Phase 4: Death, Respawn & Scoring
 **Goal:** A complete match plays from first shot to game-over — crash animation, death, respawn, scores accumulate, and the game ends at 50 points.
@@ -134,7 +148,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Foundation | 5/5 | Complete | 2026-05-16 |
 | 2. Two Characters Move | 4/4 | Complete | 2026-05-16 |
-| 3. Combat | 0/? | Not started | - |
+| 3. Combat | 5/5 | Complete | 2026-05-16 |
 | 4. Death, Respawn & Scoring | 0/? | Not started | - |
 | 5. Audio | 0/? | Not started | - |
 | 6. Screens & Packaging | 0/? | Not started | - |

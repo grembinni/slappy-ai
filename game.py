@@ -1,6 +1,8 @@
+from collections import deque
+
 import pygame
 from enum import Enum, auto
-from player import Player
+from player import Player, CharState
 from settings import (
     SCREEN_W,
     SCREEN_H,
@@ -10,6 +12,8 @@ from settings import (
     CEILING_COLOR,
     GROUND_COLOR,
     FPS,
+    DIR_LEFT,
+    DIR_RIGHT,
 )
 
 
@@ -52,11 +56,32 @@ class Game:
         for player in self.players:
             player.update(dt, keys)
 
+        # Update beams and remove expired ones (CMB-06)
+        for player in self.players:
+            player.beams = deque(
+                (b for b in player.beams if b.update(dt)),
+                maxlen=10,
+            )
+
+        # Collision detection: beam hits living opponent → CRASHING (CMB-07, CMB-08)
+        for i, player in enumerate(self.players):
+            if player.state != CharState.ALIVE:
+                continue
+            opponent = self.players[1 - i]
+            for beam in list(opponent.beams):
+                if beam.direction in (DIR_LEFT, DIR_RIGHT):  # CMB-08: VB6 Or-bug fix
+                    if player.rect.clipline(beam.start, beam.end):
+                        player.state = CharState.CRASHING
+                        break
+
     def draw(self) -> None:
         """Render one frame: blit background then flip display."""
         self.screen.blit(self.background, (0, 0))
         for player in self.players:
             player.draw(self.screen)
+        for player in self.players:
+            for beam in player.beams:
+                beam.draw(self.screen)
         pygame.display.flip()
 
     def run(self) -> None:
@@ -70,5 +95,15 @@ class Game:
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_DELETE:
                         running = False
+                    elif event.key == pygame.K_KP0:
+                        sup = self.players[0]
+                        if sup.state == CharState.ALIVE:
+                            d = sup.facing if sup.facing in (DIR_LEFT, DIR_RIGHT) else DIR_LEFT
+                            sup.fire(d)
+                    elif event.key == pygame.K_e:
+                        gob = self.players[1]
+                        if gob.state == CharState.ALIVE:
+                            d = gob.facing if gob.facing in (DIR_LEFT, DIR_RIGHT) else DIR_RIGHT
+                            gob.fire(d)
             self.update(dt)
             self.draw()

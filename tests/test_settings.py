@@ -26,7 +26,7 @@ def test_constants():
     assert settings.SCREEN_H == 800
     assert settings.SPRITE_SIZE == 128
     assert settings.WIN_SCORE == 50
-    assert settings.BEAM_SPEED == 400
+    assert settings.BEAM_SPEED == 800
     assert settings.FPS == 60
 
 

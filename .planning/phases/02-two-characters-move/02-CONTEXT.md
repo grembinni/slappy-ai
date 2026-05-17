@@ -51,7 +51,7 @@ Create `player.py` with the `Player` class and `CharState` enum. Both characters
 - **D-15:** All Superman air sprites are confirmed present in `raw_assets/icons/` — both `SLeft1.ico` and `SLeft2.ico` exist. No aliasing or mirroring needed.
 
 ### Claude's Discretion
-- Direction tracking: Player stores `self.facing` (last non-idle direction) for use in Phase 3 beam firing. Initialize to `DIR_RIGHT` for Superman, `DIR_LEFT` for Goblin (characters face inward at game start).
+- Direction tracking: Player stores `self.facing` (last non-idle direction) for use in Phase 3 beam firing. Initialize to `DIR_LEFT` for Superman, `DIR_RIGHT` for Goblin (characters face inward at game start).
 - Starting positions: Superman starts at (SCREEN_W * 0.75, SCREEN_H // 2); Goblin starts at (SCREEN_W * 0.25, SCREEN_H // 2) — facing each other.
 - `game.py` changes: instantiate two `Player` objects in `Game.__init__`; call `player.update(dt, keys)` and `player.draw(screen)` from `Game.update()` and `Game.draw()`.
 

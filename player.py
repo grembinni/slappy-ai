@@ -1,10 +1,15 @@
+from collections import deque
+
 import pygame
 from enum import Enum, auto
+from beam import Beam
 from settings import (
     SCREEN_W, SCREEN_H, SPRITE_SIZE, DISPLAY_SPRITE_SIZE,
     CEILING_STOP_Y, GROUND_STOP_Y,
     DIR_UP, DIR_DOWN, DIR_LEFT, DIR_RIGHT, DIR_IDLE,
     PLAYER_SPEED_UP, PLAYER_SPEED_H, PLAYER_SPEED_DOWN, ANIM_INTERVAL,
+    SUPERMAN_BEAM_COLOR, GOBLIN_BEAM_COLOR,
+    WRAP_VISIBLE_PX,
 )
 
 
@@ -120,6 +125,9 @@ class Player:
         self._on_ground: bool = False
         self._moving_h: bool = False
 
+        # Beam ring buffer — populated by fire(), iterated by game.py (D-08)
+        self.beams: deque = deque(maxlen=10)
+
     # ------------------------------------------------------------------ #
     # Properties                                                           #
     # ------------------------------------------------------------------ #
@@ -178,11 +186,12 @@ class Player:
         self.x += dx
         self.y += dy
 
-        # Step 4 — horizontal wrap (MOV-04)
-        if self.x < -DISPLAY_SPRITE_SIZE:
-            self.x = SCREEN_W
-        elif self.x > SCREEN_W:
-            self.x = -DISPLAY_SPRITE_SIZE
+        # Step 4 — horizontal wrap (MOV-04): 33% of sprite stays visible at crossover
+        _offscreen = DISPLAY_SPRITE_SIZE - WRAP_VISIBLE_PX   # 72px
+        if self.x < -_offscreen:
+            self.x = float(SCREEN_W - WRAP_VISIBLE_PX)
+        elif self.x > SCREEN_W - WRAP_VISIBLE_PX:
+            self.x = float(-_offscreen)
 
         # Step 5 — vertical clamp
         if self.y < CEILING_STOP_Y:   # MOV-06: ceiling (top 75% into cloud zone)
@@ -205,6 +214,27 @@ class Player:
         self._direction = direction
         self._on_ground = on_ground
         self._moving_h = (dx != 0)
+
+    # ------------------------------------------------------------------ #
+    # Beam firing                                                          #
+    # ------------------------------------------------------------------ #
+
+    def fire(self, direction: int) -> None:
+        """Create a beam at the player's center in the given direction.
+
+        Called by game.py on KEYDOWN fire events (CMB-01, CMB-02).
+        direction must be DIR_LEFT or DIR_RIGHT (enforced by game.py fallback).
+        No-op if not ALIVE (CRASHING/DEAD players cannot fire).
+        """
+        if self.state != CharState.ALIVE:
+            return
+        cx = self.x + DISPLAY_SPRITE_SIZE // 2
+        cy = self.y + DISPLAY_SPRITE_SIZE // 2
+        color = (
+            SUPERMAN_BEAM_COLOR if self.character == "superman"
+            else GOBLIN_BEAM_COLOR
+        )
+        self.beams.append(Beam(cx, cy, direction, color))
 
     # ------------------------------------------------------------------ #
     # Draw                                                                 #

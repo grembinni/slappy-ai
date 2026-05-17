@@ -1,8 +1,8 @@
 # Project State
 
 ## Current Status
-- Phase: 3
-- Status: Ready — Phase 2 complete
+- Phase: 4
+- Status: Ready — Phase 3 complete
 - Last updated: 2026-05-16
 - Current Plan: 0/?
 
@@ -10,25 +10,27 @@
 See: .planning/PROJECT.md (updated 2026-05-16)
 
 **Core value:** Two players on the same keyboard can immediately start blasting each other.
-**Current focus:** Phase 3 — Combat
+**Current focus:** Phase 4 — Death, Respawn & Scoring
 
 ## Phase History
 - Phase 1: Foundation — Complete (2026-05-16) — 5/5 plans, 15 tests passing
 - Phase 2: Two Characters Move — Complete (2026-05-16) — 4/4 plans, 35 tests passing
+- Phase 3: Combat — Complete (2026-05-16) — 5/5 plans, 50 tests passing
 
 ---
 
 ## Performance Metrics
 
 - Requirements total: 50
-- Requirements complete: 13 (ENG-01–05, MOV-01–10)
+- Requirements complete: 21 (ENG-01–05, MOV-01–10, CMB-01–08)
 - Phases total: 6
-- Phases complete: 2
+- Phases complete: 3
 
 | Phase | Plan | Duration (s) | Tasks | Files |
 |-------|------|-------------|-------|-------|
 | 01 | 05 | 162 | 3 | 5 |
 | 02 | 04 | — | 4 | 4 |
+| 03 | 05 | — | 5 | 3 |
 
 ## Accumulated Context
 
@@ -70,8 +72,8 @@ See: .planning/PROJECT.md (updated 2026-05-16)
 ## Session Continuity
 
 Last session: 2026-05-16
-Stopped at: Phase 3 context gathered — beam firing, travel, wrap, collision decisions locked
-Next: /gsd:plan-phase 3 (Combat — create PLAN.md)
+Stopped at: Phase 4 context gathered — crash animation, respawn keys, scoring formula, HUD decisions locked
+Next: /gsd:plan-phase 4 (Death, Respawn & Scoring — create PLAN.md)
 
 Start each session by reading:
 1. `.planning/STATE.md` (this file) — current position

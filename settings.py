@@ -18,7 +18,7 @@ GROUND_COLOR = (0, 128, 0)       # vbGreen = 0x008000
 
 # Gameplay
 WIN_SCORE = 50
-BEAM_SPEED = 400              # pixels per second — tunable in Phase 3
+BEAM_SPEED = 800              # pixels per second — tunable in Phase 3
 GOBLIN_BEAM_COLOR = (0, 200, 0)    # green per CMB-04
 SUPERMAN_BEAM_COLOR = (200, 0, 0)  # red per CMB-04
 
@@ -44,3 +44,13 @@ DISPLAY_SPRITE_SIZE = int(SPRITE_SIZE * 0.85)  # 108px
 GROUND_STOP_Y = GROUND_Y + int((SCREEN_H - GROUND_Y) * 0.75) - DISPLAY_SPRITE_SIZE
 # Ceiling: sprite top stops when 75% into ceiling zone (0 to CEILING_H)
 CEILING_STOP_Y = int(CEILING_H * 0.25)
+
+# Horizontal wrap — 33% of sprite stays visible when crossing edge
+WRAP_VISIBLE_PX = DISPLAY_SPRITE_SIZE // 3   # 36px visible at wrap point
+
+# Beam (Phase 3)
+BEAM_LENGTH = 40   # px — visual bolt length and wrap threshold (D-01, D-07)
+BEAM_WIDTH = 3     # px — pygame.draw.line width argument (D-01)
+
+# Death & Crash (Phase 4)
+SPIN_INTERVAL = 0.1    # seconds per spin frame during crash animation (DTH-03)
